@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "962841382883",
+    "project_id": "foodapp-yafa",
+    "storage_bucket": "foodapp-yafa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:962841382883:android:affa269035185424ae9ad6",
+        "android_client_info": {
+          "package_name": "com.example.yafa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "962841382883-beg0bu8qdivqi0haj9oisfrbsn08ppo9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAlbiHl31rnmOoyiin7v5r9c8WX9sUeLs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "962841382883-beg0bu8qdivqi0haj9oisfrbsn08ppo9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:962841382883:android:c110fdb112a751f9ae9ad6",
+        "android_client_info": {
+          "package_name": "com.exampleTest.myapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "962841382883-beg0bu8qdivqi0haj9oisfrbsn08ppo9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAlbiHl31rnmOoyiin7v5r9c8WX9sUeLs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "962841382883-beg0bu8qdivqi0haj9oisfrbsn08ppo9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
