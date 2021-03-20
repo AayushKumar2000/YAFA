@@ -3,18 +3,19 @@ import 'package:yafa/screens/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pin_put/pin_put.dart';
-import 'package:yafa/screens/login.dart';
+import 'package:yafa/services/database_user.dart';
 
 class otp extends StatefulWidget {
   @override
   _otpState createState() => _otpState();
 }
 
-var phone;
-var verificationCode;
-
 // ignore: camel_case_types
 class _otpState extends State<otp> {
+  var phone;
+  String verificationCode = "";
+  late Map user;
+  FirebaseAuth authc = FirebaseAuth.instance;
   final GlobalKey<ScaffoldState> scaffoldkey = GlobalKey<ScaffoldState>();
   // ignore: close_sinks
   final _pinPutController = TextEditingController();
@@ -28,9 +29,8 @@ class _otpState extends State<otp> {
   );
   @override
   Widget build(BuildContext context) {
-    final Map<String, Object> phoneno =
-        ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
-    phone = phoneno['number'];
+    user = ModalRoute.of(context)!.settings.arguments as Map;
+    phone = user['number'];
     print(phone);
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -65,22 +65,19 @@ class _otpState extends State<otp> {
               pinAnimationType: PinAnimationType.fade,
               onSubmit: (pin) async {
                 try {
-                  await authc
-                      .signInWithCredential(PhoneAuthProvider.credential(
-                          verificationId: verificationCode, smsCode: pin))
-                      .then((value) async {
-                    if (value.user != null) {
-                      print("pass to home");
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (context) => Home()),
-                          (route) => false);
-                    }
-                  });
-                } catch (e) {
-                  FocusScope.of(context).unfocus();
-                  scaffoldkey.currentState!.showSnackBar(SnackBar(
-                    content: Text("Invalid OTP"),
+                  await authc.signInWithCredential(PhoneAuthProvider.credential(
+                      verificationId: verificationCode, smsCode: pin));
+                  UserDatabase().addUser(user['name'], user['email']);
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => Home()),
+                      (route) => false);
+                } on FirebaseAuthException catch (e) {
+                  print("error1: $e");
+
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: new Text(phoneAuthErrorMessages(e.code)),
+                    duration: new Duration(seconds: 5),
                   ));
                 }
               },
@@ -94,31 +91,33 @@ class _otpState extends State<otp> {
   verifyPhone(phone) async {
     await authc.verifyPhoneNumber(
       phoneNumber: "$phone",
+      timeout: const Duration(seconds: 10),
       verificationCompleted: (PhoneAuthCredential credential) async {
-        await authc.signInWithCredential(credential).then((value) async {
-          if (value.user != null) {
-            print("user logged in");
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => Home()),
-                (route) => false);
-          }
-        });
+        await authc.signInWithCredential(credential);
+        UserDatabase().addUser(user['name'], user['email']);
+
+        Navigator.pushAndRemoveUntil(context,
+            MaterialPageRoute(builder: (context) => Home()), (route) => false);
       },
       verificationFailed: (FirebaseAuthException e) {
-        print(e);
+        print("error2: $e");
+
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: new Text(phoneAuthErrorMessages(e.code)),
+          duration: new Duration(seconds: 5),
+        ));
       },
       codeSent: (String verificationID, int? resendToken) {
-        setState(() {
-          verificationCode = verificationID;
-        });
+        this.verificationCode = verificationID;
       },
       codeAutoRetrievalTimeout: (String verificationID) {
-        setState(() {
-          verificationCode = verificationID;
-        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: new Text(
+              ' SMS auto-retrieval times out, please enter the code manually'),
+          duration: new Duration(seconds: 5),
+        ));
+        this.verificationCode = verificationID;
       },
-      timeout: Duration(seconds: 60),
     );
   }
 
@@ -129,5 +128,19 @@ class _otpState extends State<otp> {
     Future.delayed(Duration.zero, () {
       verifyPhone(phone);
     });
+  }
+
+  String phoneAuthErrorMessages(String code) {
+    switch (code) {
+      case "invalid-phone-number":
+        return "The format of the phone number provided is incorrect";
+        break;
+      case "invalid-verification-code":
+        return "Invalid Verification code";
+        break;
+
+      default:
+        return "";
+    }
   }
 }

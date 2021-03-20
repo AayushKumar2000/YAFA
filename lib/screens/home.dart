@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:yafa/screens/account.dart';
 import 'package:yafa/screens/bookmark.dart';
 import 'package:yafa/screens/defaultHomeScreen.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +30,7 @@ class _HomeState extends State<Home> {
         return BookMarkScreen();
         break;
       case 2:
-        return accountScreen();
+        return Account();
         break;
       default:
         return Container();
@@ -64,8 +66,4 @@ class _HomeState extends State<Home> {
                   backgroundColor: Colors.white)
             ]));
   }
-}
-
-Widget accountScreen() {
-  return Container(child: Text('account'));
 }

@@ -27,10 +27,11 @@ class _VendorListState extends State<VendorList>
   @override
   void initState() {
     UserDatabase().getBookmarks().then((x) => {
-          setState(() {
-            bookmarkList = x.map((y) => y['restaurantID']).toList();
-            print(bookmarkList);
-          })
+          if (this.mounted)
+            setState(() {
+              bookmarkList = x.map((y) => y['restaurantID']).toList();
+              print(bookmarkList);
+            })
         });
     super.initState();
   }
