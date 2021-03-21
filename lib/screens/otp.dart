@@ -14,6 +14,7 @@ class otp extends StatefulWidget {
 class _otpState extends State<otp> {
   var phone;
   String verificationCode = "";
+  int forceResendToken = 0;
   late Map user;
   FirebaseAuth authc = FirebaseAuth.instance;
   final GlobalKey<ScaffoldState> scaffoldkey = GlobalKey<ScaffoldState>();
@@ -44,11 +45,23 @@ class _otpState extends State<otp> {
             margin: EdgeInsets.only(top: 40),
             child: Center(
               child: Text(
-                "OTP sent to $phone\n               Please verify",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                "OTP sent to $phone",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               ),
             ),
           ),
+          Container(
+            child: TextButton(
+                onPressed: () {
+                  verifyPhone(phone);
+                },
+                child: Text('Resend Code')),
+          ),
+          SizedBox(
+            height: 10.0,
+          ),
+          Text('Enter your OTP',
+              style: TextStyle(fontSize: 17.0, fontWeight: FontWeight.w600)),
           Padding(
             padding: const EdgeInsets.all(30.0),
             child: PinPut(
@@ -91,6 +104,7 @@ class _otpState extends State<otp> {
   verifyPhone(phone) async {
     await authc.verifyPhoneNumber(
       phoneNumber: "$phone",
+      forceResendingToken: forceResendToken,
       timeout: const Duration(seconds: 10),
       verificationCompleted: (PhoneAuthCredential credential) async {
         await authc.signInWithCredential(credential);
@@ -107,8 +121,9 @@ class _otpState extends State<otp> {
           duration: new Duration(seconds: 5),
         ));
       },
-      codeSent: (String verificationID, int? resendToken) {
+      codeSent: (String verificationID, [int? forceResendingToken]) {
         this.verificationCode = verificationID;
+        this.forceResendToken = forceResendingToken!;
       },
       codeAutoRetrievalTimeout: (String verificationID) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
