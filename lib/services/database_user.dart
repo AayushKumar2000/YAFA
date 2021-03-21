@@ -52,4 +52,13 @@ class UserDatabase {
 
     return userData.data()!['bookmarks'];
   }
+
+  Future<Map<String, String>> getUser() async {
+    DocumentSnapshot userData = await user.doc(currentUser!.uid).get();
+    return {
+      "userID": currentUser!.uid,
+      "name": userData.data()!['name'],
+      "email": userData.data()!['email']
+    };
+  }
 }

@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:yafa/providers/user.dart';
 
 class Account extends StatefulWidget {
   @override
@@ -7,25 +9,131 @@ class Account extends StatefulWidget {
 }
 
 class _AccountState extends State<Account> {
-  FirebaseAuth auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
-    User? user = auth.currentUser;
+    CurrentUser currentUser = Provider.of<CurrentUser>(context, listen: false);
+    print(currentUser.user);
+
     return Container(
+        padding: EdgeInsets.only(top: 40.0, left: 16.0, right: 16.0),
         child: Column(
-      children: [
-        Text('account'),
-        SizedBox(
-          height: 20.0,
-        ),
-        Text("user: ${user!.uid}"),
-        TextButton(
-            onPressed: () {
-              FirebaseAuth.instance.signOut();
-            },
-            child: Text('Logout'))
-      ],
-    ));
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Account Settings',
+              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(
+              height: 30.0,
+            ),
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.history),
+                      SizedBox(
+                        width: 8.0,
+                      ),
+                      Text(
+                        'Order History',
+                        style: TextStyle(color: Colors.black87, fontSize: 15.8),
+                      ),
+                    ],
+                  ),
+                  Icon(Icons.arrow_forward_ios,
+                      size: 18.5, color: Colors.black54)
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
+            Divider(
+              height: 0.5,
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.notifications_none),
+                      SizedBox(
+                        width: 8.0,
+                      ),
+                      Text(
+                        'Notifications',
+                        style: TextStyle(color: Colors.black87, fontSize: 15.8),
+                      )
+                    ],
+                  ),
+                  Icon(Icons.arrow_forward_ios,
+                      size: 18.5, color: Colors.black54)
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
+            Divider(
+              height: 0.5,
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.help_outline),
+                      SizedBox(
+                        width: 8.0,
+                      ),
+                      Text(
+                        'About',
+                        style: TextStyle(color: Colors.black87, fontSize: 15.8),
+                      )
+                    ],
+                  ),
+                  Icon(Icons.arrow_forward_ios,
+                      size: 18.5, color: Colors.black54)
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
+            Divider(
+              height: 0.5,
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
+            Container(
+              child: Row(
+                children: [
+                  Icon(Icons.logout),
+                  TextButton(
+                      onPressed: () async {
+                        await FirebaseAuth.instance.signOut();
+                        Navigator.pushNamed(context, '/login');
+                      },
+                      child: Text(
+                        'Logout',
+                        style: TextStyle(color: Colors.black87, fontSize: 15.0),
+                      ))
+                ],
+              ),
+            )
+          ],
+        ));
     ;
   }
 }

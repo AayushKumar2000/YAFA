@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:yafa/providers/user.dart';
 import 'package:yafa/screens/account.dart';
 import 'package:yafa/screens/bookmark.dart';
 import 'package:yafa/screens/defaultHomeScreen.dart';
@@ -39,6 +41,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    Provider.of<CurrentUser>(context, listen: false);
     return Scaffold(
         body: SafeArea(
           child: SelectedHomeScreen(),

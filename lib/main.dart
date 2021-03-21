@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:yafa/cart.dart';
 import 'package:yafa/payments/test_payment.dart';
+import 'package:yafa/providers/user.dart';
 import 'package:yafa/screens/home.dart';
 import 'package:yafa/screens/login.dart';
 import 'package:yafa/screens/menu.dart';
@@ -37,12 +38,13 @@ Widget fireBaseConnection() {
 }
 
 class App extends StatelessWidget {
-  FirebaseAuth authc = FirebaseAuth.instance;
-
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<Cart>(
-      create: (context) => Cart(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<Cart>(create: (context) => Cart()),
+        ChangeNotifierProvider<CurrentUser>(create: (context) => CurrentUser())
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         // initialRoute: '/signup',
@@ -75,13 +77,15 @@ class App extends StatelessWidget {
 }
 
 handleAuth() {
-  return StreamBuilder(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (BuildContext context, snapshot) {
-        if (snapshot.hasData) {
-          return Home();
-        } else {
-          return Login();
-        }
-      });
+  // return StreamBuilder(
+  //     stream: FirebaseAuth.instance.authStateChanges(),
+  //     builder: (BuildContext context, snapshot) {
+  //       if (snapshot.hasData) {
+  //         return Home();
+  //       } else {
+  //         return Login();
+  //       }
+  //     });
+  FirebaseAuth auth = FirebaseAuth.instance;
+  return auth.currentUser != Null ? Home() : Login();
 }
