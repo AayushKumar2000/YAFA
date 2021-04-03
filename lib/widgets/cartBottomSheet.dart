@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:yafa/cart.dart';
+import 'package:yafa/providers/upi.dart';
 
 class CartBottomSheet extends StatelessWidget {
   @override
@@ -179,7 +180,15 @@ void cartBottomSheet(context) {
                               color: Colors.white),
                         ),
                         TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Vendor_UPI v = Provider.of<Vendor_UPI>(context,
+                                  listen: false);
+                              Navigator.pushNamed(context, '/payment',
+                                  arguments: {
+                                    "VendorName": v.name,
+                                    "VendorUpiID": v.id
+                                  });
+                            },
                             child: Row(
                               children: <Widget>[
                                 Text(

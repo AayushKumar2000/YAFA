@@ -40,8 +40,16 @@ class _HomeState extends State<Home> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    //Provider.of<CurrentUser>(context, listen: false);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    Provider.of<CurrentUser>(context, listen: false);
+    print(11111111);
+    Provider.of<CurrentUser>(context, listen: false).getUser();
     return Scaffold(
         body: SafeArea(
           child: SelectedHomeScreen(),

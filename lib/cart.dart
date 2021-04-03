@@ -67,6 +67,11 @@ class Cart extends ChangeNotifier {
     notifyListeners();
   }
 
+  void emptyCart() {
+    order = {};
+    //  notifyListeners();
+  }
+
   void addItem(Map item) {
     late List items = [];
 

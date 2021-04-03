@@ -1,17 +1,20 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:yafa/cart.dart';
-import 'package:yafa/payments/test_payment.dart';
+import 'package:yafa/providers/upi.dart';
+
 import 'package:yafa/providers/user.dart';
+import 'package:yafa/providers/websocket.dart';
 import 'package:yafa/screens/home.dart';
 import 'package:yafa/screens/login.dart';
 import 'package:yafa/screens/menu.dart';
 import 'package:yafa/screens/otp.dart';
 
-import 'package:yafa/widgets/payment.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import 'package:yafa/screens/payment.dart';
+import 'package:yafa/screens/transactionResponse.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,6 +46,7 @@ class App extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<Cart>(create: (context) => Cart()),
+        ChangeNotifierProvider<Vendor_UPI>(create: (context) => Vendor_UPI()),
         ChangeNotifierProvider<CurrentUser>(create: (context) => CurrentUser())
       ],
       child: MaterialApp(
@@ -53,7 +57,9 @@ class App extends StatelessWidget {
           '/home': (context) => Home(),
           '/login': (context) => Login(),
           '/menu': (context) => Menu(),
-          '/otp': (context) => otp()
+          '/otp': (context) => otp(),
+          '/transactionResponse': (context) => TransactionResponse(),
+          '/payment': (context) => Payment()
         },
 
         // onGenerateRoute: (settings) {
@@ -87,5 +93,6 @@ handleAuth() {
   //       }
   //     });
   FirebaseAuth auth = FirebaseAuth.instance;
-  return auth.currentUser != Null ? Home() : Login();
+
+  return auth.currentUser != null ? Home() : Login();
 }

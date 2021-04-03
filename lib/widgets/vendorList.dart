@@ -41,8 +41,14 @@ class _VendorListState extends State<VendorList>
     return StreamBuilder(
       stream: VendorDatabase().VednorStream(),
       builder: (context, snapshot) {
+        print(snapshot);
         if (snapshot.hasError) {
-          return Text('Something went wrong');
+          return NoResultFound(
+            primaryText: 'Oops! Something went wrong.',
+            secondaryBoldText: '',
+            secondaryText2: '',
+            secondaryText: 'Unable to fetch data from the server.',
+          );
         }
 
         if (snapshot.connectionState == ConnectionState.waiting ||

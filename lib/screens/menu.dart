@@ -1,8 +1,11 @@
+import 'package:provider/provider.dart';
 import 'package:yafa/models/model_Menu.dart';
+import 'package:yafa/providers/upi.dart';
 import 'package:yafa/services/database_Menu.dart';
 import 'package:yafa/widgets/bottomCart.dart';
 import 'package:yafa/widgets/loading.dart';
 import 'package:yafa/widgets/menuTile.dart';
+import 'package:yafa/widgets/noResult.dart';
 import 'package:yafa/widgets/vendorList.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:yafa/models/model_Vendor.dart';
@@ -15,12 +18,13 @@ class Menu extends StatelessWidget {
 
   void initState() {}
 
-  
-
   @override
   Widget build(BuildContext context) {
     final VendorModel VendorDetail =
         ModalRoute.of(context)!.settings.arguments as VendorModel;
+
+    Provider.of<Vendor_UPI>(context, listen: false)
+        .addUpi(VendorDetail.vendor_upiName, VendorDetail.vendor_upiID);
 
     return SafeArea(
         child: Scaffold(
@@ -29,7 +33,13 @@ class Menu extends StatelessWidget {
                 builder: (context, AsyncSnapshot<List<MenuModel>> snapshot) {
                   print(snapshot);
                   if (snapshot.hasError) {
-                    return Text('Something went wrong');
+                    return NoResultFound(
+                      primaryText: 'Oops! Something went wrong.',
+                      secondaryBoldText: '',
+                      secondaryText2: '',
+                      secondaryText: 'Unable to fetch data from the server.',
+                    );
+                    ;
                   }
 
                   if (snapshot.connectionState == ConnectionState.waiting) {

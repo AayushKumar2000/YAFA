@@ -26,13 +26,15 @@ class MenuTile extends StatelessWidget {
                           fontSize: 18.0,
                           fontWeight: FontWeight.w600)),
                   SizedBox(height: 1.0),
-                  Text(
-                    '${menu.type == 'veg' ? 'In Veg Pizza' : 'In Non Veg Pizza'}',
-                    style: TextStyle(
-                      fontSize: 14.5,
-                      color: Colors.black54,
-                    ),
-                  ),
+                  menu.type != ""
+                      ? Text(
+                          '${menu.type}',
+                          style: TextStyle(
+                            fontSize: 14.5,
+                            color: Colors.black54,
+                          ),
+                        )
+                      : Container(),
                   SizedBox(
                     height: 10.0,
                   ),

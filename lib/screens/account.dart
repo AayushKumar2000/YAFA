@@ -12,6 +12,7 @@ class _AccountState extends State<Account> {
   @override
   Widget build(BuildContext context) {
     CurrentUser currentUser = Provider.of<CurrentUser>(context, listen: false);
+
     print(currentUser.user);
 
     return Container(
@@ -24,7 +25,33 @@ class _AccountState extends State<Account> {
               style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
             ),
             SizedBox(
+              height: 20.0,
+            ),
+            Container(
+              child: Row(
+                children: [
+                  Icon(Icons.account_circle),
+                  SizedBox(
+                    width: 8.0,
+                  ),
+                  Text(
+                    "${currentUser.user['name']}",
+                    style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 16.8,
+                        fontWeight: FontWeight.w400),
+                  )
+                ],
+              ),
+            ),
+            SizedBox(
               height: 30.0,
+            ),
+            Divider(
+              height: 0.5,
+            ),
+            SizedBox(
+              height: 10.0,
             ),
             Container(
               child: Row(
@@ -123,7 +150,8 @@ class _AccountState extends State<Account> {
                   TextButton(
                       onPressed: () async {
                         await FirebaseAuth.instance.signOut();
-                        Navigator.pushNamed(context, '/login');
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            '/login', (Route<dynamic> route) => false);
                       },
                       child: Text(
                         'Logout',

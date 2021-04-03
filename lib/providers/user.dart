@@ -7,11 +7,7 @@ import 'package:yafa/services/database_user.dart';
 class CurrentUser extends ChangeNotifier {
   Map<String, String> user = {};
   Future getUser() async {
+    print(5555);
     user = await UserDatabase().getUser();
-  }
-
-  CurrentUser() {
-    print("5555555555555555555555555555555555");
-    UserDatabase().getUser().then((v) => {user = v});
   }
 }
