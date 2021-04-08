@@ -1,6 +1,10 @@
+import 'dart:convert';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:yafa/widgets/search.dart';
 import 'package:yafa/widgets/vendorList.dart';
-
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
 class DefaultHomeScreen extends StatefulWidget {
@@ -25,7 +29,27 @@ class _DefaultHomeScreenState extends State<DefaultHomeScreen> {
   @override
   void initState() {
     _controller = ScrollController();
+    getDeviceToken();
     super.initState();
+  }
+
+  getDeviceToken() async {
+    String token = (await FirebaseMessaging.instance.getToken())!;
+    storeDeviceToken(token);
+    print(token);
+    FirebaseMessaging.instance.onTokenRefresh.listen(storeDeviceToken);
+  }
+
+  storeDeviceToken(String token) async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    var url = Uri.parse(
+        'https://xqbjtrf7i5.execute-api.us-east-1.amazonaws.com/dev/addFcmToken');
+    var res = await http.post(url,
+        body: jsonEncode(<String, String>{
+          'userID': '${auth.currentUser!.uid}',
+          'fcmToken': '$token'
+        }));
+    print(res.statusCode);
   }
 
   Widget build(BuildContext context) {

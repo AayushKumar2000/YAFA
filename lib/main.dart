@@ -3,21 +3,26 @@ import 'package:yafa/cart.dart';
 import 'package:yafa/providers/upi.dart';
 
 import 'package:yafa/providers/user.dart';
-import 'package:yafa/providers/websocket.dart';
 import 'package:yafa/screens/home.dart';
 import 'package:yafa/screens/login.dart';
 import 'package:yafa/screens/menu.dart';
 import 'package:yafa/screens/otp.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:yafa/screens/payment.dart';
+import 'package:yafa/screens/pushNotification.dart';
 import 'package:yafa/screens/transactionResponse.dart';
+import 'package:yafa/services/messages.dart';
+import 'package:yafa/widgets/test.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   runApp(MaterialApp(home: fireBaseConnection()));
 }
 
@@ -40,7 +45,19 @@ Widget fireBaseConnection() {
   );
 }
 
-class App extends StatelessWidget {
+class App extends StatefulWidget {
+  @override
+  _AppState createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+
+  void initState() {
+    final pushNotificationService = PushNotification(_firebaseMessaging);
+    pushNotificationService.initialise();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -59,7 +76,8 @@ class App extends StatelessWidget {
           '/menu': (context) => Menu(),
           '/otp': (context) => otp(),
           '/transactionResponse': (context) => TransactionResponse(),
-          '/payment': (context) => Payment()
+          '/payment': (context) => Payment(),
+          '/test': (context) => Test()
         },
 
         // onGenerateRoute: (settings) {
@@ -82,16 +100,14 @@ class App extends StatelessWidget {
   }
 }
 
-handleAuth() {
-  // return StreamBuilder(
-  //     stream: FirebaseAuth.instance.authStateChanges(),
-  //     builder: (BuildContext context, snapshot) {
-  //       if (snapshot.hasData) {
-  //         return Home();
-  //       } else {
-  //         return Login();
-  //       }
-  //     });
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+
+  print("Handling a background message: ${message.data}");
+  print('Message also contained a notification: ${message}');
+}
+
+Widget handleAuth() {
   FirebaseAuth auth = FirebaseAuth.instance;
 
   return auth.currentUser != null ? Home() : Login();

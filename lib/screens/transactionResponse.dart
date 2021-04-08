@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:yafa/widgets/orderTrasaction.dart';
 
 class TransactionResponse extends StatelessWidget {
   @override
@@ -49,8 +48,7 @@ class TransactionResponse extends StatelessWidget {
                     fontSize: 20.0,
                     decoration: TextDecoration.none,
                     color: status ? Colors.green[600] : Colors.red),
-              )
-              ,OrderTransaction()
+              ),
             ],
           ),
         ),

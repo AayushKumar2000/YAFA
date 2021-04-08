@@ -1,12 +1,15 @@
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:provider/provider.dart';
 import 'package:yafa/providers/user.dart';
 import 'package:yafa/screens/account.dart';
 import 'package:yafa/screens/bookmark.dart';
 import 'package:yafa/screens/defaultHomeScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:yafa/screens/login.dart';
+import 'package:yafa/widgets/test.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -39,17 +42,35 @@ class _HomeState extends State<Home> {
     }
   }
 
-  @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    //Provider.of<CurrentUser>(context, listen: false);
+
+    FirebaseMessaging.instance.getInitialMessage().then((message) {
+      print("init message $message");
+      if (message != null) Navigator.pushNamed(context, '/test');
+    });
+
+    // If the message also contains a data property with a "type" of "chat",
+    // navigate to a chat screen
+
+    // Also handle any interaction when the app is in the background via a
+    // Stream listener
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print("remote message $message");
+
+      if (message != null) Navigator.pushNamed(context, '/test');
+      // Navigator.push(
+      //     context, new MaterialPageRoute(builder: (context) => new Test()));
+    });
   }
 
+  @override
   @override
   Widget build(BuildContext context) {
     print(11111111);
     Provider.of<CurrentUser>(context, listen: false).getUser();
+
     return Scaffold(
         body: SafeArea(
           child: SelectedHomeScreen(),
