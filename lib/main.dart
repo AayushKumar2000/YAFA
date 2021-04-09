@@ -70,14 +70,14 @@ class _AppState extends State<App> {
         debugShowCheckedModeBanner: false,
         // initialRoute: '/signup',
         routes: {
-          '/': (context) => handleAuth(),
-          '/home': (context) => Home(),
-          '/login': (context) => Login(),
-          '/menu': (context) => Menu(),
-          '/otp': (context) => otp(),
-          '/transactionResponse': (context) => TransactionResponse(),
-          '/payment': (context) => Payment(),
-          '/test': (context) => Test()
+          // '/': (context) => handleAuth(),
+          // '/home': (context) => Home(),
+          // '/login': (context) => Login(),
+          // '/menu': (context) => Menu(),
+          // '/otp': (context) => otp(),
+          // '/transactionResponse': (context) => TransactionResponse(),
+          // '/payment': (context) => Payment(),
+          '/': (context) => Test()
         },
 
         // onGenerateRoute: (settings) {
