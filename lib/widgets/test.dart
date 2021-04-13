@@ -21,17 +21,33 @@ void db() async {
 
   // await dbOrder.executeDBCommands("DROP TABLE orders");
 
-  Order order = Order(
-      order_id: "1212",
-      order_price: 320.0,
-      vendor_name: "burger kign",
-      order_stage: "pending");
-  await dbOrder.insetOrder(order);
-  dbOrder.getData();
+  // Order order = Order(
+  //     order_id: "1212",
+  //     order_price: 320.0,
+  //     vendor_name: "burger kign",
+  //     order_stage: "pending");
+  // order = Order(
+  //     order_id: "1213",
+  //     order_price: 460.0,
+  //     vendor_name: "burger kign",
+  //     order_stage: "pending");
+  // order = Order(
+  //     order_id: "1214",
+  //     order_price: 730.0,
+  //     vendor_name: "burger kign",
+  //     order_stage: "pending");
+  // await dbOrder.insetOrder(order);
+  // dbOrder.getData();
 
-  Order_Item item =
-      Order_Item(item_count: 2, item_name: "kfc bucket", vendor_id: "1212");
-  await dbItem.insetItem(item);
+  // Order_Item item = Order_Item(
+  //     item_count: 2, item_name: "6 Pc Hot & crispy Chicken", vendor_id: "1212");
+  // await dbItem.insetItem(item);
+  // item =
+  //     Order_Item(item_count: 1, item_name: "Rice Dual Meal", vendor_id: "1212");
+  // await dbItem.insetItem(item);
+  // item =
+  //     Order_Item(item_count: 5, item_name: "Large Popcorn", vendor_id: "1212");
+  // await dbItem.insetItem(item);
   dbItem.getData();
 
 //   List<Order> list;
@@ -40,5 +56,5 @@ void db() async {
 //   // await dbOrder.updateDog(list[0]);
 //   list = await dbOrder.findOrder("1212");
 //   print("list ${list[0]}");
-//   dbOrder.getData();
+  dbOrder.getData();
 }

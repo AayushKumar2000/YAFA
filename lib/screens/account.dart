@@ -16,7 +16,7 @@ class _AccountState extends State<Account> {
     print(currentUser.user);
 
     return Container(
-        padding: EdgeInsets.only(top: 40.0, left: 16.0, right: 16.0),
+        padding: EdgeInsets.only(top: 40.0, left: 14.0, right: 14.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -50,33 +50,43 @@ class _AccountState extends State<Account> {
             Divider(
               height: 0.5,
             ),
-            SizedBox(
-              height: 10.0,
-            ),
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
+            // SizedBox(
+            //   height: 10.0,
+            // ),
+            Material(
+              child: InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, '/showOrder');
+                },
+                child: Container(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Icon(Icons.history),
-                      SizedBox(
-                        width: 8.0,
+                      Row(
+                        children: [
+                          Icon(Icons.history),
+                          SizedBox(
+                            width: 8.0,
+                          ),
+                          Text(
+                            'Order History',
+                            style: TextStyle(
+                                color: Colors.black87, fontSize: 15.8),
+                          ),
+                        ],
                       ),
-                      Text(
-                        'Order History',
-                        style: TextStyle(color: Colors.black87, fontSize: 15.8),
-                      ),
+                      Icon(Icons.arrow_forward_ios,
+                          size: 18.5, color: Colors.black54)
                     ],
                   ),
-                  Icon(Icons.arrow_forward_ios,
-                      size: 18.5, color: Colors.black54)
-                ],
+                ),
               ),
             ),
-            SizedBox(
-              height: 10.0,
-            ),
+            // SizedBox(
+            //   height: 10.0,
+            // ),
             Divider(
               height: 0.5,
             ),

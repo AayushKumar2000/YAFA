@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:yafa/models/model_Menu.dart';
 import 'package:yafa/providers/upi.dart';
@@ -20,6 +21,11 @@ class Menu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var dt = DateTime.now();
+    var newDt = DateFormat.yMMMd().format(dt);
+    var newDt2 = DateFormat.jm().format(dt);
+
+    print("$newDt at $newDt2");
     final VendorModel VendorDetail =
         ModalRoute.of(context)!.settings.arguments as VendorModel;
 
@@ -153,7 +159,9 @@ class Menu extends StatelessWidget {
                             itemBuilder: (context, index) {
                               return MenuTile(
                                   menu: snapshot.data![index],
-                                  vendorID: VendorDetail.docID);
+                                  vendorID: VendorDetail.docID,
+                                  vendorName: VendorDetail.name,
+                                  vendorPlace: VendorDetail.place);
                             }),
                       ),
                       BottomCart()

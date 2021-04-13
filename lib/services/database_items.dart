@@ -10,15 +10,15 @@ import 'package:sqflite/sqflite.dart';
 class Order_Item {
   late final String item_name;
   late final int item_count;
-  late final String vendor_id;
+  late final String order_id;
 
   Order_Item(
       {required this.item_count,
       required this.item_name,
-      required this.vendor_id});
+      required this.order_id});
 
   Map<String, dynamic> toMap() {
-    return {'name': item_name, 'count': item_count, 'vendor_id': vendor_id};
+    return {'name': item_name, 'count': item_count, 'order_id': order_id};
   }
 }
 
@@ -51,7 +51,7 @@ class DatabaseItem {
       onCreate: (db, version) async {
         print("on create");
         await db.execute(
-            "CREATE TABLE items( vendor_id TEXT,name TEXT, count INTEGER,PRIMARY KEY(vendor_id, name))");
+            "CREATE TABLE items( order_id TEXT,name TEXT, count INTEGER,PRIMARY KEY(order_id, name))");
       },
       version: 1,
     );
@@ -78,16 +78,18 @@ class DatabaseItem {
     );
   }
 
-  Future<List<Order_Item>> items() async {
+  Future<List<Order_Item>> item(String id) async {
     final Database db = await database;
 
-    final List<Map<String, dynamic>> maps = await db.query('items');
+    final List<Map<String, dynamic>> maps =
+        await db.query('items', where: "order_id=?", whereArgs: [id]);
+    ;
 
     return List.generate(maps.length, (i) {
       return Order_Item(
           item_count: maps[i]['count'],
           item_name: maps[i]['name'],
-          vendor_id: maps[i]['vendor_id']);
+          order_id: maps[i]['order_id']);
     });
   }
 }

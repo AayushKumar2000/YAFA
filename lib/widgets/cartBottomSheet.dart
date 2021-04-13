@@ -181,6 +181,8 @@ void cartBottomSheet(context) {
                         ),
                         TextButton(
                             onPressed: () {
+                              Provider.of<Cart>(context, listen: false)
+                                  .addTimeToOrder();
                               Vendor_UPI v = Provider.of<Vendor_UPI>(context,
                                   listen: false);
                               Navigator.pushNamed(context, '/payment',

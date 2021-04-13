@@ -6,8 +6,14 @@ import 'package:provider/provider.dart';
 class MenuTile extends StatelessWidget {
   late MenuModel menu;
   late String vendorID;
+  late String vendorPlace;
+  late String vendorName;
 
-  MenuTile({required this.menu, required this.vendorID});
+  MenuTile(
+      {required this.menu,
+      required this.vendorID,
+      required this.vendorPlace,
+      required this.vendorName});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -67,6 +73,8 @@ class MenuTile extends StatelessWidget {
                           "itemID": menu.docID,
                           "itemName": menu.name,
                           "vendorID": vendorID,
+                          "vendorName": vendorName,
+                          "vendorPlace": vendorPlace,
                           "itemPrice": menu.price
                         });
                       },

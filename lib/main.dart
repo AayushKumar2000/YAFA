@@ -15,6 +15,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:yafa/screens/payment.dart';
 import 'package:yafa/screens/pushNotification.dart';
+import 'package:yafa/screens/showOrder.dart';
 import 'package:yafa/screens/transactionResponse.dart';
 import 'package:yafa/services/messages.dart';
 import 'package:yafa/widgets/test.dart';
@@ -68,16 +69,17 @@ class _AppState extends State<App> {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        // initialRoute: '/signup',
+        //  initialRoute: '/test',
         routes: {
-          // '/': (context) => handleAuth(),
-          // '/home': (context) => Home(),
-          // '/login': (context) => Login(),
-          // '/menu': (context) => Menu(),
-          // '/otp': (context) => otp(),
-          // '/transactionResponse': (context) => TransactionResponse(),
-          // '/payment': (context) => Payment(),
-          '/': (context) => Test()
+          '/': (context) => handleAuth(),
+          '/home': (context) => Home(),
+          '/login': (context) => Login(),
+          '/menu': (context) => Menu(),
+          '/otp': (context) => otp(),
+          '/transactionResponse': (context) => TransactionResponse(),
+          '/payment': (context) => Payment(),
+          '/showOrder': (context) => ShowOrder(),
+          '/test': (context) => Test()
         },
 
         // onGenerateRoute: (settings) {

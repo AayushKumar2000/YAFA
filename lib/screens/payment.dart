@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:yafa/cart.dart';
 import 'package:yafa/cart.dart';
 import 'package:yafa/payments/payment_api.dart';
+import 'package:yafa/services/database_order.dart';
+import 'package:yafa/services/database_items.dart';
 
 class Payment extends StatefulWidget {
   @override
@@ -17,7 +19,7 @@ class _PaymentState extends State<Payment> {
     Map Vendor_upi = ModalRoute.of(context)!.settings.arguments as Map;
 
     Map cart = Provider.of<Cart>(context, listen: false).order;
-    print(cart['totalPrice'].runtimeType);
+    print(cart);
 
     return FutureBuilder(
         future: pay.getUpiApps(),
@@ -59,10 +61,13 @@ class _PaymentState extends State<Payment> {
                                   Vendor_upi['VendorUpiID'],
                                   //      cart['totalPrice'],
                                   2.0,
-                                  "food1241");
+                                  cart['orderID']);
                               print("res-> $res");
 
                               if (res['responseCode'] == "00") {
+                                saveToDatabase(
+                                    Provider.of<Cart>(context, listen: false)
+                                        .order);
                                 Provider.of<Cart>(context, listen: false)
                                     .emptyCart();
                               }
@@ -101,4 +106,30 @@ class _PaymentState extends State<Payment> {
         });
     ;
   }
+}
+
+void saveToDatabase(order) async {
+  DatabaseOrder dbOrder = DatabaseOrder.instance;
+  DatabaseItem dbItem = DatabaseItem.instance;
+  print("saving order into db");
+  Order o = Order(
+      order_id: order['orderID'],
+      order_price: order['totalPrice'],
+      vendor_name: order["vendorName"],
+      order_stage: "Ordered",
+      vendor_place: order['vendorPlace'],
+      order_time: order['time']);
+  dbOrder.insetOrder(o);
+
+  List items = order['items'];
+  print(items);
+  Order_Item ot;
+  items.forEach((item) {
+    print(item);
+    ot = Order_Item(
+        item_count: item['count'],
+        item_name: item['itemName'],
+        order_id: order['orderID']);
+    dbItem.insetItem(ot);
+  });
 }
