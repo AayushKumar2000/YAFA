@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:provider/provider.dart';
+import 'package:yafa/providers/orderState.dart';
 import 'package:yafa/services/database_order.dart';
 import 'package:yafa/services/database_items.dart';
 import 'package:yafa/widgets/loading.dart';
@@ -9,12 +11,45 @@ class ShowOrder extends StatefulWidget {
   _ShowOrderState createState() => _ShowOrderState();
 }
 
-class _ShowOrderState extends State<ShowOrder> {
+class _ShowOrderState extends State<ShowOrder> with WidgetsBindingObserver {
   DatabaseOrder dbOrder = DatabaseOrder.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.removeObserver(this);
+    super.dispose();
+  }
+
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        {
+          print("app in resumed");
+          setState(() {});
+        }
+        break;
+      case AppLifecycleState.inactive:
+        print("app in inactive");
+        break;
+      case AppLifecycleState.paused:
+        print("app in paused");
+        break;
+      case AppLifecycleState.detached:
+        print("app in detached");
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     dbOrder.getData();
+    Provider.of<OrderState>(context, listen: false).removeState();
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -75,8 +110,12 @@ class _ShowOrderState extends State<ShowOrder> {
   }
 }
 
-Widget? orderItem(snapshot, Context) {
+Widget? orderItem(snapshot, context) {
   DatabaseItem dbItem = DatabaseItem.instance;
+  // Map<String, String> orderState =
+  //     Provider.of<OrderState>(context, listen: true).orderState;
+
+  // print("order state: $orderState");
 
   return Expanded(
     child: ListView.builder(
@@ -101,7 +140,7 @@ Widget? orderItem(snapshot, Context) {
             margin: EdgeInsets.only(bottom: 15.0, top: 15.0, right: 5, left: 5),
             padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
             child: SizedBox(
-              height: 320,
+              height: 350,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -161,7 +200,7 @@ Widget? orderItem(snapshot, Context) {
                         }),
                   ),
                   SizedBox(
-                    height: 10.0,
+                    height: 5.0,
                   ),
                   Text(
                     'ORDER ID',
@@ -187,11 +226,53 @@ Widget? orderItem(snapshot, Context) {
                     'ORDER STATUS',
                     style: TextStyle(fontSize: 12.5, color: Colors.grey[350]),
                   ),
-                  Text(
-                    order.order_stage,
-                  ),
                   SizedBox(
-                    height: 10.0,
+                    height: 5.0,
+                  ),
+                  Consumer<OrderState>(builder: (context, OrderState, child) {
+                    String? v = OrderState.state["${order.order_id}"];
+                    String x = v == null ? order.order_stage : v;
+
+                    Color? TextColor, backgroundColor;
+                    if (x == "Processing") {
+                      TextColor = Colors.yellow[700];
+                      backgroundColor = Colors.yellow[100];
+                    } else if (x == "Delivered") {
+                      TextColor = Colors.green[600];
+                      backgroundColor = Colors.green[200];
+                    } else if (x == "Canceled") {
+                      TextColor = Colors.red[600];
+                      backgroundColor = Colors.red[200];
+                    } else if (x == "Delayed") {
+                      TextColor = Colors.grey;
+                      backgroundColor = Colors.grey[350];
+                    } else if (x == "Ready") {
+                      TextColor = Colors.blue[600];
+                      backgroundColor = Colors.blue[200];
+                    } else {
+                      TextColor = Colors.black;
+                      backgroundColor = Colors.white;
+                    }
+                    return Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 5.0, horizontal: 8.0),
+                      decoration: BoxDecoration(
+                          color: backgroundColor,
+                          borderRadius: BorderRadius.circular(2.3)),
+                      child: Text(
+                        x,
+                        style: TextStyle(
+                            color: TextColor,
+                            fontSize: 15.0,
+                            letterSpacing: 0.02,
+                            fontWeight: FontWeight.w400),
+                      ),
+                    );
+
+                    // return T
+                  }),
+                  SizedBox(
+                    height: 5.0,
                   ),
                   Divider(thickness: 1.5, color: Colors.grey[100]),
                   Row(
@@ -222,11 +303,11 @@ Widget itemList(context, snapshot) {
   //return Text("");
   return Expanded(
     child: SizedBox(
-      //    height: 100,
+      // height: 200,
       child: ScrollConfiguration(
         behavior: MyBehavior(),
         child: ListView.builder(
-            //physics: const NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             itemCount: snapshot.data.length,
             itemBuilder: (context, index) {
               Order_Item item = snapshot.data[index];

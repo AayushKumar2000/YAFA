@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:yafa/cart.dart';
+import 'package:yafa/providers/orderState.dart';
 import 'package:yafa/providers/upi.dart';
 
 import 'package:yafa/providers/user.dart';
@@ -19,6 +20,7 @@ import 'package:yafa/screens/showOrder.dart';
 import 'package:yafa/screens/transactionResponse.dart';
 import 'package:yafa/services/messages.dart';
 import 'package:yafa/widgets/test.dart';
+import 'package:yafa/services/database_order.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -53,23 +55,19 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-
-  void initState() {
-    final pushNotificationService = PushNotification(_firebaseMessaging);
-    pushNotificationService.initialise();
-  }
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<Cart>(create: (context) => Cart()),
         ChangeNotifierProvider<Vendor_UPI>(create: (context) => Vendor_UPI()),
-        ChangeNotifierProvider<CurrentUser>(create: (context) => CurrentUser())
+        ChangeNotifierProvider<CurrentUser>(create: (context) => CurrentUser()),
+        ChangeNotifierProvider<OrderState>(create: (context) => OrderState()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         //  initialRoute: '/test',
+
         routes: {
           '/': (context) => handleAuth(),
           '/home': (context) => Home(),
@@ -104,6 +102,9 @@ class _AppState extends State<App> {
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
+
+  DatabaseOrder dbOrder = DatabaseOrder.instance;
+  dbOrder.updateOrder(message.data);
 
   print("Handling a background message: ${message.data}");
   print('Message also contained a notification: ${message}');

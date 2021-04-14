@@ -124,14 +124,15 @@ class DatabaseOrder {
     });
   }
 
-  Future<void> updateOrder(Order order) async {
+  Future<void> updateOrder(Map<String, dynamic> status) async {
     final Database db = await database;
 
+    print("status $status");
     await db.update(
       'orders',
-      order.toMap(),
+      {"state": status["status"]},
       where: "id = ?",
-      whereArgs: [order.order_id],
+      whereArgs: [status['orderID']],
     );
   }
 }

@@ -8,7 +8,7 @@ class Cart extends ChangeNotifier {
     order = {"vednorID":"","orderID":"","time":"","vendorName":"","vendorPlace":"",items:[{"itemName":"",itemID":"","count": 0,"price":0.0}], "totalPrice":"", 
     "totalItems":""}
    */
-  late Map order = {};
+  Map order = {};
 
   // void _calculateTotalPrice() {
   //   late double totalPrice = 0.0;
