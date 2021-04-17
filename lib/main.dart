@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:yafa/cart.dart';
+import 'package:yafa/providers/checkConnectivity.dart';
 import 'package:yafa/providers/orderState.dart';
 import 'package:yafa/providers/upi.dart';
 
@@ -19,10 +20,13 @@ import 'package:yafa/screens/pushNotification.dart';
 import 'package:yafa/screens/showOrder.dart';
 import 'package:yafa/screens/transactionResponse.dart';
 import 'package:yafa/services/messages.dart';
+import 'package:yafa/widgets/connectivityError.dart';
+import 'package:yafa/widgets/loading.dart';
 import 'package:yafa/widgets/test.dart';
 import 'package:yafa/services/database_order.dart';
+import 'package:connectivity/connectivity.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
@@ -43,7 +47,11 @@ Widget fireBaseConnection() {
         return App();
       }
 
-      return Text("initializing flutter fire coonection");
+      return Container(
+        color: Colors.green[500],
+        width: MediaQuery.of(context).size.width,
+        child: Text('YAFA'),
+      );
     },
   );
 }
@@ -63,6 +71,8 @@ class _AppState extends State<App> {
         ChangeNotifierProvider<Vendor_UPI>(create: (context) => Vendor_UPI()),
         ChangeNotifierProvider<CurrentUser>(create: (context) => CurrentUser()),
         ChangeNotifierProvider<OrderState>(create: (context) => OrderState()),
+        ChangeNotifierProvider<CheckConnectivity>(
+            create: (context) => CheckConnectivity())
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
