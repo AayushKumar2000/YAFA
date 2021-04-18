@@ -18,7 +18,7 @@ class PushNotification {
       print("remote message $message");
     });
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       print('Got a message whilst in the foreground!');
       print('Message data: ${message.data}');
 

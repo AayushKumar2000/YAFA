@@ -6,7 +6,6 @@ import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:yafa/cart.dart';
 import 'package:yafa/cart.dart';
-import 'package:http/http.dart' as http;
 import 'package:yafa/payments/payment_api.dart';
 import 'package:yafa/providers/user.dart';
 import 'package:yafa/services/database_order.dart';
@@ -71,12 +70,6 @@ class _PaymentState extends State<Payment> {
                               print("res-> $res");
 
                               if (res['responseCode'] == "00") {
-                                sendOrderToServer(
-                                    Provider.of<Cart>(context, listen: false)
-                                        .order,
-                                    Provider.of<CurrentUser>(context,
-                                            listen: false)
-                                        .user);
                                 saveToDatabase(
                                     Provider.of<Cart>(context, listen: false)
                                         .order);
@@ -129,7 +122,7 @@ void saveToDatabase(order) async {
       order_id: order['orderID'],
       order_price: order['totalPrice'],
       vendor_name: order["vendorName"],
-      order_stage: "Ordered",
+      order_stage: "Processing",
       vendor_place: order['vendorPlace'],
       order_time: order['time']);
   dbOrder.insetOrder(o);
@@ -145,33 +138,4 @@ void saveToDatabase(order) async {
         order_id: order['orderID']);
     dbItem.insetItem(ot);
   });
-}
-
-void sendOrderToServer(order, user) {
-  var payloadData = {}, payload = {}, x = {};
-
-  payloadData["vendorID"] = order['vendorID'];
-  payloadData["orderID"] = order['orderID'];
-  payloadData["time"] = order['time'];
-  payloadData["items"] = order['items'];
-  payloadData["totalPrice"] = "${order['totalPrice']}";
-  payloadData["totalItems"] = "${order['totalItems']}";
-  payloadData["customerID"] = user['userID'];
-
-// x["userID"] = order['vendorID'];
-//  for testing only
-  x["userID"] = user['userID'];
-  x["data"] = payloadData;
-
-  payload['message'] = x;
-  print(user);
-  print("payload ${json.encode(payload)}");
-
-  http
-      .post(
-          Uri.https(
-              "xqbjtrf7i5.execute-api.us-east-1.amazonaws.com", '/dev/order'),
-          headers: {"messageGroupID": "1"},
-          body: json.encode(payload))
-      .then((res) => print(res.body));
 }
