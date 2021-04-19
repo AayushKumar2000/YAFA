@@ -1,12 +1,16 @@
+import 'dart:io';
+
 import 'package:connectivity/connectivity.dart';
 import 'package:provider/provider.dart';
 import 'package:yafa/providers/checkConnectivity.dart';
+import 'package:yafa/services/recent_search.dart';
 import 'package:yafa/widgets/connectivityError.dart';
 import 'package:yafa/widgets/loading.dart';
 import 'package:yafa/widgets/noResult.dart';
 import 'package:flutter/material.dart';
 import 'package:algolia_ns/algolia_ns.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:yafa/widgets/recentSearchList.dart';
 
 class Search extends SearchDelegate {
   final String searchFieldLabel = "Restaurant name, cuisine, or a dish";
@@ -15,7 +19,9 @@ class Search extends SearchDelegate {
 
   List<AlgoliaObjectSnapshot> _results = [];
   late Algolia algolia;
+  int counter = 0;
   late AlgoliaQuery queryAgolia;
+  DatabaseRecentSearch dbSearch = DatabaseRecentSearch.instance;
 
   Search() {
     algolia = Algolia.init(
@@ -28,15 +34,16 @@ class Search extends SearchDelegate {
 
   @override
   List<Widget> buildActions(BuildContext context) {
-    return [
-      IconButton(
-        icon: Icon(Icons.clear),
-        onPressed: () {
-          query = '';
-        },
-      ),
-    ];
-    ;
+    return query.isEmpty
+        ? [Container()]
+        : [
+            IconButton(
+              icon: Icon(Icons.clear),
+              onPressed: () {
+                query = '';
+              },
+            ),
+          ];
   }
 
   @override
@@ -52,27 +59,40 @@ class Search extends SearchDelegate {
   Widget buildResults(BuildContext context) {
     return Consumer<CheckConnectivity>(
         builder: (context, checkConnectivity, child) {
-      print(checkConnectivity.connectivity);
       if (checkConnectivity.connectivity == ConnectivityResult.none)
         return ConnectivityError();
+      if (query.isEmpty)
+        return Text('');
       else
-        return Container();
-      ;
+        return searchList();
     });
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    //
+    counter++;
     return Consumer<CheckConnectivity>(
         builder: (context, checkConnectivity, child) {
-      print(checkConnectivity.connectivity);
       if (checkConnectivity.connectivity == ConnectivityResult.none)
         return ConnectivityError();
       else {
-        if (query.isEmpty)
-          return Text('');
-        else
+        if (query.isEmpty) {
+          dbSearch.getData();
+          if (counter < 3) {
+            return spinkitLoading;
+          } else
+            return FutureBuilder<List<RecentSearch>>(
+                future: dbSearch.getSearches(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting)
+                    return Container();
+                  ;
+                  if (snapshot.hasError)
+                    return Text('erorr: ${snapshot.error}');
+
+                  return RecentSearchList(snapshot: snapshot.data!);
+                });
+        } else {
           return FutureBuilder(
             future: queryAgolia.search(query).getObjects(),
             builder: (BuildContext context,
@@ -82,7 +102,6 @@ class Search extends SearchDelegate {
 
               if (snapshot.hasError) return Text('erorr');
               _results = snapshot.data!.hits!;
-              print(snapshot.data!.hits!.length);
               if (_results.length == 0)
                 return Container(
                   //padding: EdgeInsets.symmetric(horizontal: 2.0),
@@ -95,38 +114,36 @@ class Search extends SearchDelegate {
                   )),
                 );
               else
-                return ListView.builder(
-                  itemCount: _results.length,
-                  itemBuilder: (context, index) {
-                    String type = _results[index].data!['restaurantID'] != null
-                        ? "Dish"
-                        : "Outlet";
-                    return Container(
-                      margin: EdgeInsets.symmetric(
-                          horizontal: 20.0, vertical: 10.0),
-                      padding: EdgeInsets.symmetric(vertical: 5.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            '${_results[index].data!['name']}',
-                            style: TextStyle(
-                                fontSize: 18.0, fontWeight: FontWeight.w500),
-                          ),
-                          SizedBox(
-                            height: 3.0,
-                          ),
-                          Text('${_results[index].data!['place'] ?? type}',
-                              style: TextStyle(
-                                  fontSize: 15.0, color: Colors.grey[500])),
-                        ],
-                      ),
-                    );
-                  },
-                );
+                return searchList();
             },
           );
+        }
       }
     });
+  }
+
+  Widget searchList() {
+    return ListView.builder(
+      itemCount: _results.length,
+      itemBuilder: (context, index) {
+        String type =
+            _results[index].data!['restaurantID'] != null ? "Dish" : "Outlet";
+        String title = _results[index].data!['name'];
+        String sub_title = _results[index].data!['place'] ?? type;
+        return ListTile(
+          title: Text(
+            '$title',
+            style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+          ),
+          subtitle: Text(sub_title,
+              style: TextStyle(fontSize: 15.0, color: Colors.grey[500])),
+          onTap: () {
+            RecentSearch search =
+                RecentSearch(search_title: title, search_subTitle: sub_title);
+            dbSearch.insertSearch(search);
+          },
+        );
+      },
+    );
   }
 }
