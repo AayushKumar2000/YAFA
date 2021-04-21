@@ -18,7 +18,8 @@ class _DefaultHomeScreenState extends State<DefaultHomeScreen> {
   List<String> SelectedFilterNames = [];
   List<String> filterList = [
     "Rating 4.0+",
-    "Vegetarian",
+    "Veg",
+    "Non Veg",
     "Online",
     "South Indian",
     "North Indian",

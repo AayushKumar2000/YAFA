@@ -17,6 +17,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:yafa/screens/payment.dart';
 import 'package:yafa/screens/pushNotification.dart';
+import 'package:yafa/screens/searchResult.dart';
 import 'package:yafa/screens/showOrder.dart';
 import 'package:yafa/screens/transactionResponse.dart';
 import 'package:yafa/widgets/connectivityError.dart';
@@ -86,6 +87,7 @@ class _AppState extends State<App> {
           '/transactionResponse': (context) => TransactionResponse(),
           '/payment': (context) => Payment(),
           '/showOrder': (context) => ShowOrder(),
+          '/recentSearchResult': (context) => SearchResult(),
           '/test': (context) => Test()
         },
 

@@ -19,6 +19,7 @@ class VendorModel {
       required this.docID});
 
   factory VendorModel.fromJson(Map<String, dynamic> parsedJSON, String id) {
+    print("vendor models: ${parsedJSON['status']}");
     var foodTypefromJson = parsedJSON['foodType'];
     bool containUPI = parsedJSON['upi'] != null ? true : false;
     List<String> foodType = new List<String>.from(foodTypefromJson);

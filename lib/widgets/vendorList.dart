@@ -13,9 +13,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class VendorList extends StatefulWidget {
-  List<String> filterSelected = [];
+  List<String>? filterSelected = [];
 
-  VendorList({required this.filterSelected});
+  VendorList({this.filterSelected});
 
   @override
   _VendorListState createState() => _VendorListState();
@@ -68,7 +68,7 @@ class _VendorListState extends State<VendorList>
             print("f ${widget.filterSelected}");
             FilterList fl = FilterList(
                 vendorList: snapshot.data as List<VendorModel>,
-                filters: widget.filterSelected);
+                filters: widget.filterSelected!);
             print("filter list");
 
             List<VendorModel> vendorList = fl.filter();

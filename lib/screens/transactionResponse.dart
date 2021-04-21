@@ -53,12 +53,14 @@ class _TransactionResponseState extends State<TransactionResponse> {
   Widget build(BuildContext context) {
     Map response = ModalRoute.of(context)!.settings.arguments as Map;
     status = response['responseCode'] == "00" ? true : false;
-    if (orderServerResponse == 0) sendOrderToServer();
+    if (orderServerResponse == 0 && status) sendOrderToServer();
     String message = !status
         ? "Transaction Failed!\n \t\tTry Again Later"
         : "Transaction Successfull!";
+
     return WillPopScope(
-      onWillPop: () async => orderServerResponse == 0 ? false : true,
+      onWillPop: () async => false,
+      // orderServerResponse != 0 && status || !status ? true : false,
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
@@ -71,12 +73,13 @@ class _TransactionResponseState extends State<TransactionResponse> {
                 size: 28.0,
               ),
               onPressed: () {
-                if (orderServerResponse != 0) {
+                if (orderServerResponse != 0 && status || !status) {
                   if (!status) {
                     Navigator.of(context).pop();
                   } else
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        '/home', (Route<dynamic> route) => false);
+                    Provider.of<Cart>(context, listen: false).emptyCart();
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/home', (Route<dynamic> route) => false);
                 }
               }),
         ),
@@ -109,7 +112,9 @@ class _TransactionResponseState extends State<TransactionResponse> {
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 15.0)),
                 SizedBox(height: 5.0),
-                orderServerResponse == 0 ? spinkitLoadingCircle : Container()
+                orderServerResponse == 0 && status
+                    ? spinkitLoadingCircle
+                    : Container()
               ],
             ),
           ),

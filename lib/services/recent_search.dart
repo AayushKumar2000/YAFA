@@ -10,11 +10,19 @@ import 'package:sqflite/sqflite.dart';
 class RecentSearch {
   late final String search_title;
   late final String search_subTitle;
+  late final String? search_vendorID;
 
-  RecentSearch({required this.search_title, required this.search_subTitle});
+  RecentSearch(
+      {required this.search_title,
+      required this.search_subTitle,
+      required this.search_vendorID});
 
   Map<String, dynamic> toMap() {
-    return {'search_title': search_title, 'search_subtitle': search_subTitle};
+    return {
+      'search_title': search_title,
+      'search_subtitle': search_subTitle,
+      'vendor_id': search_vendorID
+    };
   }
 }
 
@@ -48,7 +56,7 @@ class DatabaseRecentSearch {
       onCreate: (db, version) async {
         print("on create");
         await db.execute(
-            "CREATE TABLE recent_search( search_title TEXT ,search_subtitle TEXT,PRIMARY KEY(search_title))");
+            "CREATE TABLE recent_search( search_title TEXT ,search_subtitle TEXT, vendor_id TEXT NULL,PRIMARY KEY(search_title))");
       },
       version: 1,
     );
@@ -83,6 +91,7 @@ class DatabaseRecentSearch {
     List<RecentSearch> l = List.generate(maps.length, (i) {
       return RecentSearch(
           search_title: maps[i]['search_title'],
+          search_vendorID: maps[i]['vendor_id'],
           search_subTitle: maps[i]['search_subtitle']);
     });
     print(" revserved searches: $l");

@@ -28,8 +28,8 @@ class MenuTile extends StatelessWidget {
                 children: <Widget>[
                   Text(menu.name,
                       style: TextStyle(
-                          letterSpacing: 0.5,
-                          fontSize: 18.0,
+                          letterSpacing: 0.25,
+                          fontSize: 17.0,
                           fontWeight: FontWeight.w600)),
                   SizedBox(height: 1.0),
                   menu.type != ""
@@ -54,7 +54,7 @@ class MenuTile extends StatelessWidget {
                     menu.description,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 3,
-                    style: TextStyle(fontSize: 15.5, color: Colors.grey[700]),
+                    style: TextStyle(fontSize: 14.0, color: Colors.grey[700]),
                   ),
                   SizedBox(
                     height: 12.0,

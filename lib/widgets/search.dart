@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:provider/provider.dart';
+import 'package:yafa/models/model_Vendor.dart';
 import 'package:yafa/providers/checkConnectivity.dart';
+import 'package:yafa/services/database_Vendor.dart';
 import 'package:yafa/services/recent_search.dart';
 import 'package:yafa/widgets/connectivityError.dart';
 import 'package:yafa/widgets/loading.dart';
@@ -70,6 +72,8 @@ class Search extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
+    print("build");
+    dbSearch.getData();
     counter++;
     return Consumer<CheckConnectivity>(
         builder: (context, checkConnectivity, child) {
@@ -126,10 +130,12 @@ class Search extends SearchDelegate {
     return ListView.builder(
       itemCount: _results.length,
       itemBuilder: (context, index) {
+        print(_results[index].data);
         String type =
-            _results[index].data!['restaurantID'] != null ? "Dish" : "Outlet";
+            _results[index].data!.containsKey('place') ? "Outlet" : "Dish";
         String title = _results[index].data!['name'];
         String sub_title = _results[index].data!['place'] ?? type;
+        String vendorID = _results[index].objectID!;
         return ListTile(
           title: Text(
             '$title',
@@ -138,12 +144,25 @@ class Search extends SearchDelegate {
           subtitle: Text(sub_title,
               style: TextStyle(fontSize: 15.0, color: Colors.grey[500])),
           onTap: () {
-            RecentSearch search =
-                RecentSearch(search_title: title, search_subTitle: sub_title);
+            RecentSearch search = RecentSearch(
+                search_title: title,
+                search_subTitle: sub_title,
+                search_vendorID: type == "Outlet" ? vendorID : null);
             dbSearch.insertSearch(search);
+            getResultPage(context, type, title, vendorID);
           },
         );
       },
     );
+  }
+
+  void getResultPage(context, type, title, vendorID) async {
+    VendorDatabase v = VendorDatabase();
+    if (type == "Outlet") {
+      VendorModel vendor = await v.getVendor(vendorID);
+      Navigator.pushNamed(context, '/menu', arguments: vendor);
+    } else
+      Navigator.pushNamed(context, '/recentSearchResult',
+          arguments: {"query": title});
   }
 }

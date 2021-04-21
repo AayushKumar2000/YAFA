@@ -73,9 +73,6 @@ class _PaymentState extends State<Payment> {
                                 saveToDatabase(
                                     Provider.of<Cart>(context, listen: false)
                                         .order);
-
-                                Provider.of<Cart>(context, listen: false)
-                                    .emptyCart();
                               }
                               Navigator.of(context).popAndPushNamed(
                                   '/transactionResponse',

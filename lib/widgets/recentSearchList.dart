@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:yafa/models/model_Vendor.dart';
+import 'package:yafa/services/database_Vendor.dart';
 import 'package:yafa/services/recent_search.dart';
 
 class RecentSearchList extends StatefulWidget {
@@ -29,7 +31,7 @@ class _RecentSearchListState extends State<RecentSearchList> {
               '${search.search_title}',
               style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
             ),
-            subtitle: Text('${search.search_title}',
+            subtitle: Text('${search.search_subTitle}',
                 style: TextStyle(fontSize: 15.0, color: Colors.grey[500])),
             trailing: IconButton(
               icon: Icon(
@@ -42,9 +44,22 @@ class _RecentSearchListState extends State<RecentSearchList> {
                 });
               },
             ),
-            onTap: () {},
+            onTap: () {
+              getResultPage(context, search);
+            },
           );
           ;
         });
+  }
+
+  void getResultPage(context, RecentSearch search) async {
+    print("id: ${search.search_vendorID}");
+    if (search.search_vendorID != null) {
+      VendorDatabase v = VendorDatabase();
+      VendorModel vendor = await v.getVendor(search.search_vendorID!);
+      Navigator.pushNamed(context, '/menu', arguments: vendor);
+    } else
+      Navigator.pushNamed(context, '/recentSearchResult',
+          arguments: {"query": search.search_title});
   }
 }
