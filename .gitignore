@@ -9,7 +9,7 @@
 .history
 .svn/
 
-/android/appgoogle-service.json
+/android/app/google-services.json
 
 # IntelliJ related
 *.iml
