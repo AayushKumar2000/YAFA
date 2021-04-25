@@ -65,7 +65,7 @@ class Menu extends StatelessWidget {
                           ),
                         ),
                         padding: EdgeInsets.only(left: 20.0, bottom: 35.0),
-                        margin: EdgeInsets.only(bottom: 15.0),
+                        // margin: EdgeInsets.only(bottom: 15.0),
                         width: MediaQuery.of(context).size.width,
                         child: Stack(children: [
                           Column(
@@ -128,12 +128,31 @@ class Menu extends StatelessWidget {
                                     width: 5.0,
                                   ),
                                   Text(
-                                    VendorDetail.rating.toString(),
+                                    (VendorDetail.rating).toString(),
                                     style: TextStyle(
                                         fontSize: 16.5,
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold),
-                                  )
+                                  ),
+                                  SizedBox(
+                                    width: 5.0,
+                                  ),
+                                  GestureDetector(
+                                      onTap: () {
+                                        Navigator.pushNamed(context, '/review',
+                                            arguments: {
+                                              "vendorID": VendorDetail.docID
+                                            });
+                                      },
+                                      child: Text(
+                                        'Review',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 15.5,
+                                            decoration:
+                                                TextDecoration.underline,
+                                            fontWeight: FontWeight.w400),
+                                      ))
                                 ],
                               ),
                               SizedBox(
@@ -150,7 +169,6 @@ class Menu extends StatelessWidget {
                           ),
                         ]),
                       ),
-                      SizedBox(height: 10.0),
                       Expanded(
                         child: ListView.separated(
                             itemCount: snapshot.data!.length,

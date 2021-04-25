@@ -3,6 +3,8 @@ class VendorModel {
   String name;
   String place;
   bool status;
+  double total_rating;
+  int no_of_ratings;
   double rating;
   String vendor_upiID;
   String vendor_upiName;
@@ -13,16 +15,24 @@ class VendorModel {
       required this.place,
       required this.status,
       required this.vendor_upiID,
-      required this.vendor_upiName,
       required this.rating,
+      required this.vendor_upiName,
+      required this.total_rating,
+      required this.no_of_ratings,
       required this.foodType,
       required this.docID});
 
   factory VendorModel.fromJson(Map<String, dynamic> parsedJSON, String id) {
-    print("vendor models: ${parsedJSON['status']}");
     var foodTypefromJson = parsedJSON['foodType'];
     bool containUPI = parsedJSON['upi'] != null ? true : false;
     List<String> foodType = new List<String>.from(foodTypefromJson);
+    double rating = (parsedJSON['rating']['total_rating'] /
+        parsedJSON['rating']['no_of_ratings']);
+    String st = rating.toStringAsFixed(1);
+    rating = double.parse(st);
+    if (rating.isNaN) rating = 0;
+
+    print("rating ${rating}");
     return new VendorModel(
         docID: id,
         vendor_upiName: containUPI ? parsedJSON['upi']['name'] : "",
@@ -30,7 +40,9 @@ class VendorModel {
         name: parsedJSON['name'],
         place: parsedJSON['place'],
         status: parsedJSON['status'],
-        rating: parsedJSON['rating'],
+        total_rating: (parsedJSON['rating']['total_rating']).toDouble(),
+        no_of_ratings: parsedJSON['rating']['no_of_ratings'],
+        rating: rating,
         foodType: foodType);
   }
 }

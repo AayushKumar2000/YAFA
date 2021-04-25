@@ -107,7 +107,6 @@ class _SearchResultState extends State<SearchResult> {
                           ],
                         ),
                       ),
-                      SizedBox(height: 20.0),
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(

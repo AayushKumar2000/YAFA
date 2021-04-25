@@ -164,7 +164,7 @@ class _VendorListTileState extends State<VendorListTile>
                             ),
                             SizedBox(width: 2.0),
                             Text(
-                              widget.vendor.rating.toString(),
+                              (widget.vendor.rating).toString(),
                               style: TextStyle(
                                   fontSize: 15.0, fontWeight: FontWeight.bold),
                             ),
