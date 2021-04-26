@@ -107,14 +107,15 @@ class ReviewList extends StatelessWidget {
 Widget reviewTile(UserReviewModel review) {
   return ListTile(
     title: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           review.name,
           style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
         ),
-        SizedBox(
-          width: 10.0,
-        ),
+        // SizedBox(
+        //   width: 10.0,
+        // ),
         RatingBar(
           initialRating: review.rating,
           direction: Axis.horizontal,
@@ -149,9 +150,12 @@ Widget reviewTile(UserReviewModel review) {
           style: TextStyle(fontSize: 13.0, color: Colors.grey[400]),
         ),
         SizedBox(
-          height: 5.0,
+          height: 10.0,
         ),
-        Text(review.review),
+        Text(
+          review.review,
+          style: TextStyle(color: Colors.black),
+        ),
       ],
     ),
   );

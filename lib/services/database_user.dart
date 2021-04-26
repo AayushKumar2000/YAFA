@@ -36,6 +36,7 @@ class UserDatabase {
   }
 
   void removeBookMark(VendorModel vendor) {
+    print("vendor: $vendor");
     user.doc(currentUser!.uid).update({
       'bookmarks': FieldValue.arrayRemove([_vendorMap(vendor)])
     }).then((v) => print("update"));

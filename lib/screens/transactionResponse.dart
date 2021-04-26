@@ -58,65 +58,63 @@ class _TransactionResponseState extends State<TransactionResponse> {
         ? "Transaction Failed!\n \t\tTry Again Later"
         : "Transaction Successfull!";
 
-    return WillPopScope(
-      onWillPop: () async => false,
-      // orderServerResponse != 0 && status || !status ? true : false,
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0.0,
-          leading: IconButton(
-              splashRadius: 25.0,
-              icon: Icon(
-                Icons.arrow_back,
-                color: Colors.black,
-                size: 28.0,
-              ),
-              onPressed: () {
-                if (orderServerResponse != 0 && status || !status) {
-                  if (!status) {
-                    Navigator.of(context).pop();
-                  } else
-                    Provider.of<Cart>(context, listen: false).emptyCart();
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0.0,
+        leading: IconButton(
+            splashRadius: 25.0,
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.black,
+              size: 28.0,
+            ),
+            onPressed: () {
+              print("responseL: $status");
+              if (orderServerResponse != 0 && status || !status) {
+                if (!status) {
+                  Navigator.of(context).pop();
+                } else {
+                  Provider.of<Cart>(context, listen: false).emptyCart();
                   Navigator.of(context).pushNamedAndRemoveUntil(
                       '/home', (Route<dynamic> route) => false);
                 }
-              }),
-        ),
-        body: Center(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            color: Colors.white,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  status
-                      ? Icons.check_circle_outline_sharp
-                      : Icons.cancel_outlined,
-                  size: 70.0,
-                  color: status ? Colors.green[600] : Colors.red,
-                ),
-                Text(
-                  message,
-                  style: TextStyle(
-                      fontSize: 20.0,
-                      decoration: TextDecoration.none,
-                      color: status ? Colors.green[600] : Colors.red),
-                ),
-                SizedBox(
-                  height: 5.0,
-                ),
-                Text(
-                    '${status && orderServerResponse == 0 ? 'Please wait Placing your Order' : orderServerResponse == 200 ? "Your Order placed successfully" : "Sorry, Couldn't place your order"}',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 15.0)),
-                SizedBox(height: 5.0),
-                orderServerResponse == 0 && status
-                    ? spinkitLoadingCircle
-                    : Container()
-              ],
-            ),
+              }
+            }),
+      ),
+      body: Center(
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          color: Colors.white,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                status
+                    ? Icons.check_circle_outline_sharp
+                    : Icons.cancel_outlined,
+                size: 70.0,
+                color: status ? Colors.green[600] : Colors.red,
+              ),
+              Text(
+                message,
+                style: TextStyle(
+                    fontSize: 20.0,
+                    decoration: TextDecoration.none,
+                    color: status ? Colors.green[600] : Colors.red),
+              ),
+              SizedBox(
+                height: 5.0,
+              ),
+              Text(
+                  '${status && orderServerResponse == 0 ? 'Please wait Placing your Order' : orderServerResponse == 200 ? "Your Order placed successfully" : "Sorry, Couldn't place your order"}',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 15.0)),
+              SizedBox(height: 5.0),
+              orderServerResponse == 0 && status
+                  ? spinkitLoadingCircle
+                  : Container()
+            ],
           ),
         ),
       ),
