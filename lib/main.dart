@@ -50,9 +50,7 @@ Widget fireBaseConnection() {
       }
 
       return Container(
-        color: Colors.green[500],
-        width: MediaQuery.of(context).size.width,
-        child: Text('YAFA'),
+        color: Colors.white,
       );
     },
   );
