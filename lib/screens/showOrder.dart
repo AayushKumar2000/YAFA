@@ -243,7 +243,7 @@ Widget? orderItem(snapshot, context) {
                     } else if (x == "Canceled") {
                       TextColor = Colors.red[600];
                       backgroundColor = Colors.red[200];
-                    } else if (x == "Delayed") {
+                    } else if (x == "Ordered") {
                       TextColor = Colors.grey;
                       backgroundColor = Colors.grey[350];
                     } else if (x == "Ready") {

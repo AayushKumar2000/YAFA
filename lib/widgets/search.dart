@@ -82,7 +82,7 @@ class Search extends SearchDelegate {
       else {
         if (query.isEmpty) {
           dbSearch.getData();
-          if (counter < 3) {
+          if (counter < 2) {
             return spinkitLoading;
           } else
             return FutureBuilder<List<RecentSearch>>(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:yafa/cart.dart';
+import 'package:yafa/services/database_order.dart';
 import 'package:yafa/providers/user.dart';
 import 'package:yafa/widgets/loading.dart';
 
@@ -26,14 +27,16 @@ class _TransactionResponseState extends State<TransactionResponse> {
     payloadData["orderID"] = order['orderID'];
     payloadData["time"] = order['time'];
     payloadData["items"] = order['items'];
-    payloadData["totalPrice"] = "${order['totalPrice']}";
-    payloadData["totalItems"] = "${order['totalItems']}";
+    payloadData["totalPrice"] = order['totalPrice'];
+    payloadData["totalItems"] = order['totalItems'];
     payloadData["customerID"] = user['userID'];
-
+    payloadData['timeStamp'] = DateTime.now().millisecondsSinceEpoch;
     x["userID"] = user['userID'];
     x["data"] = payloadData;
 
     payload['message'] = x;
+
+    print("payload $payload");
 
     http
         .post(
@@ -41,12 +44,21 @@ class _TransactionResponseState extends State<TransactionResponse> {
                 "xqbjtrf7i5.execute-api.us-east-1.amazonaws.com", '/dev/order'),
             headers: {"messageGroupID": "1"},
             body: json.encode(payload))
-        .then((res) => {
-              print("server response: r${res.statusCode}"),
-              setState(() {
-                orderServerResponse = res.statusCode;
-              })
-            });
+        .then((res) {
+      if (res.statusCode == 200) {
+        DatabaseOrder dbOrder = DatabaseOrder.instance;
+        Map<String, dynamic> x = {
+          "status": "Ordered",
+          "orderID": order['orderID']
+        };
+        dbOrder.updateOrder(x);
+      }
+
+      print("server response: r${res.statusCode}");
+      setState(() {
+        orderServerResponse = res.statusCode;
+      });
+    });
   }
 
   @override

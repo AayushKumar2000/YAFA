@@ -30,7 +30,7 @@ class userReview {
         .get();
 
     return querySnapshot.docs
-        .map((doc) => UserReviewModel.fromJson(doc.data()!))
+        .map((doc) => UserReviewModel.fromJson(doc.data()))
         .toList();
   }
 }

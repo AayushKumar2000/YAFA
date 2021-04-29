@@ -7,7 +7,7 @@ class VendorDatabase {
     //Stream<QuerySnapshot> VednorStream() {
     return FirebaseFirestore.instance.collection("Vendors").snapshots().map(
         (snapshot) => snapshot.docs
-            .map((doc) => VendorModel.fromJson(doc.data()!, doc.id))
+            .map((doc) => VendorModel.fromJson(doc.data(), doc.id))
             .toList());
   }
 

@@ -54,8 +54,7 @@ class _HomeState extends State<Home> {
     // for handling notification tap
 
     FirebaseMessaging.instance.getInitialMessage().then((message) {
-      print("init message $message");
-      if (message != null) Navigator.pushNamed(context, '/test');
+      if (message != null) Navigator.pushNamed(context, '/showOrder');
     });
 
     // If the message also contains a data property with a "type" of "chat",
@@ -65,10 +64,9 @@ class _HomeState extends State<Home> {
     // Stream listener
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print("remote message $message");
-
-      if (message != null) Navigator.pushNamed(context, '/test');
-      // Navigator.push(
+      print("remote message ${message.data}");
+      Navigator.pushNamed(context, '/showOrder');
+// Navigator.push(
       //     context, new MaterialPageRoute(builder: (context) => new Test()));
     });
   }
@@ -78,7 +76,6 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     final pushNotificationService = PushNotification(_firebaseMessaging);
     pushNotificationService.initialise(context);
-    print(11111111);
     Provider.of<CurrentUser>(context, listen: false).getUser();
 
     return Scaffold(

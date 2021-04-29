@@ -5,6 +5,7 @@ import 'package:yafa/providers/orderState.dart';
 import 'package:yafa/providers/upi.dart';
 
 import 'package:yafa/providers/user.dart';
+import 'package:yafa/providers/vendor_order_details.dart';
 import 'package:yafa/screens/home.dart';
 import 'package:yafa/screens/login.dart';
 import 'package:yafa/screens/menu.dart';
@@ -18,6 +19,7 @@ import 'package:provider/provider.dart';
 import 'package:yafa/screens/payment.dart';
 import 'package:yafa/screens/pushNotification.dart';
 import 'package:yafa/screens/reviewList.dart';
+import 'package:yafa/screens/vendor_Order.dart';
 import 'package:yafa/screens/writeReview.dart';
 import 'package:yafa/screens/searchResult.dart';
 import 'package:yafa/screens/showOrder.dart';
@@ -71,12 +73,14 @@ class _AppState extends State<App> {
         ChangeNotifierProvider<Vendor_UPI>(create: (context) => Vendor_UPI()),
         ChangeNotifierProvider<CurrentUser>(create: (context) => CurrentUser()),
         ChangeNotifierProvider<OrderState>(create: (context) => OrderState()),
+        ChangeNotifierProvider<VendorOrderDetails>(
+            create: (context) => VendorOrderDetails()),
         ChangeNotifierProvider<CheckConnectivity>(
             create: (context) => CheckConnectivity())
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        //  initialRoute: '/test',
+        initialRoute: '/vendorOrder',
 
         routes: {
           '/': (context) => handleAuth(),
@@ -90,7 +94,8 @@ class _AppState extends State<App> {
           '/recentSearchResult': (context) => SearchResult(),
           '/review': (context) => ReviewList(),
           '/writeReview': (context) => WriteReview(),
-          '/test': (context) => Test()
+          '/test': (context) => Test(),
+          '/vendorOrder': (context) => VendorOrder()
         },
 
         // onGenerateRoute: (settings) {
