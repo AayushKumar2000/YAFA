@@ -12,3 +12,15 @@ final Widget spinkitLoading = SpinKitThreeBounce(
     );
   },
 );
+
+final Widget spinkitLoadingCircle = SpinKitCircle(
+  size: 35.0,
+  itemBuilder: (BuildContext context, int index) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.green,
+      ),
+    );
+  },
+);

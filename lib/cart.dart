@@ -1,13 +1,14 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Cart extends ChangeNotifier {
   /*
-    order = {"vednorID":"",items:[{"itemName":"",itemID":"","count": 0,"price":0.0}], "totalPrice":"", 
+    order = {"vednorID":"","orderID":"","time":"","vendorName":"","vendorPlace":"",items:[{"itemName":"",itemID":"","count": 0,"price":0.0}], "totalPrice":"", 
     "totalItems":""}
    */
-  late Map order = {};
+  Map order = {};
 
   // void _calculateTotalPrice() {
   //   late double totalPrice = 0.0;
@@ -67,6 +68,11 @@ class Cart extends ChangeNotifier {
     notifyListeners();
   }
 
+  void emptyCart() {
+    order = {};
+    //  notifyListeners();
+  }
+
   void addItem(Map item) {
     late List items = [];
 
@@ -114,6 +120,9 @@ class Cart extends ChangeNotifier {
 
       order = {
         'vendorID': item['vendorID'],
+        "orderID": getOrderID(item['vendorID']),
+        "vendorPlace": item['vendorPlace'],
+        "vendorName": item['vendorName'],
         "totalPrice": item['itemPrice'],
         "totalItems": 1,
         'items': [
@@ -163,5 +172,19 @@ class Cart extends ChangeNotifier {
       order = {};
     print(order);
     notifyListeners();
+  }
+
+  String getOrderID(vid) {
+    String t = DateTime.now().millisecondsSinceEpoch.toString();
+
+    return vid.substring(vid.length - 6, vid.length) +
+        t.substring(t.length - 6, t.length);
+  }
+
+  void addTimeToOrder() {
+    var dt = DateTime.now();
+    var newDt = DateFormat.yMMMd().format(dt);
+    var newDt2 = DateFormat.jm().format(dt);
+    order['time'] = "$newDt at $newDt2";
   }
 }

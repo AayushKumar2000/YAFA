@@ -14,9 +14,10 @@ class MenuDatabase {
     //         print(doc["name"]);
     //       })
     //     });
+    //
 
     return querySnapshot.docs
-        .map((doc) => MenuModel.fromJson(doc.data()!, doc.id))
+        .map((doc) => MenuModel.fromJson(doc.data(), doc.id))
         .toList();
   }
 }

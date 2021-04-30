@@ -1,8 +1,12 @@
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:yafa/models/model_Menu.dart';
+import 'package:yafa/providers/upi.dart';
 import 'package:yafa/services/database_Menu.dart';
 import 'package:yafa/widgets/bottomCart.dart';
 import 'package:yafa/widgets/loading.dart';
 import 'package:yafa/widgets/menuTile.dart';
+import 'package:yafa/widgets/noResult.dart';
 import 'package:yafa/widgets/vendorList.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:yafa/models/model_Vendor.dart';
@@ -15,12 +19,18 @@ class Menu extends StatelessWidget {
 
   void initState() {}
 
-  
-
   @override
   Widget build(BuildContext context) {
+    var dt = DateTime.now();
+    var newDt = DateFormat.yMMMd().format(dt);
+    var newDt2 = DateFormat.jm().format(dt);
+
+    print("$newDt at $newDt2");
     final VendorModel VendorDetail =
         ModalRoute.of(context)!.settings.arguments as VendorModel;
+
+    Provider.of<Vendor_UPI>(context, listen: false)
+        .addUpi(VendorDetail.vendor_upiName, VendorDetail.vendor_upiID);
 
     return SafeArea(
         child: Scaffold(
@@ -29,7 +39,13 @@ class Menu extends StatelessWidget {
                 builder: (context, AsyncSnapshot<List<MenuModel>> snapshot) {
                   print(snapshot);
                   if (snapshot.hasError) {
-                    return Text('Something went wrong');
+                    return NoResultFound(
+                      primaryText: 'Oops! Something went wrong.',
+                      secondaryBoldText: '',
+                      secondaryText2: '',
+                      secondaryText: 'Unable to fetch data from the server.',
+                    );
+                    ;
                   }
 
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -49,7 +65,7 @@ class Menu extends StatelessWidget {
                           ),
                         ),
                         padding: EdgeInsets.only(left: 20.0, bottom: 35.0),
-                        margin: EdgeInsets.only(bottom: 15.0),
+                        // margin: EdgeInsets.only(bottom: 15.0),
                         width: MediaQuery.of(context).size.width,
                         child: Stack(children: [
                           Column(
@@ -112,12 +128,31 @@ class Menu extends StatelessWidget {
                                     width: 5.0,
                                   ),
                                   Text(
-                                    VendorDetail.rating.toString(),
+                                    (VendorDetail.rating).toString(),
                                     style: TextStyle(
                                         fontSize: 16.5,
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold),
-                                  )
+                                  ),
+                                  SizedBox(
+                                    width: 5.0,
+                                  ),
+                                  GestureDetector(
+                                      onTap: () {
+                                        Navigator.pushNamed(context, '/review',
+                                            arguments: {
+                                              "vendorID": VendorDetail.docID
+                                            });
+                                      },
+                                      child: Text(
+                                        'Review',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 15.5,
+                                            decoration:
+                                                TextDecoration.underline,
+                                            fontWeight: FontWeight.w400),
+                                      ))
                                 ],
                               ),
                               SizedBox(
@@ -134,7 +169,6 @@ class Menu extends StatelessWidget {
                           ),
                         ]),
                       ),
-                      SizedBox(height: 10.0),
                       Expanded(
                         child: ListView.separated(
                             itemCount: snapshot.data!.length,
@@ -143,7 +177,10 @@ class Menu extends StatelessWidget {
                             itemBuilder: (context, index) {
                               return MenuTile(
                                   menu: snapshot.data![index],
-                                  vendorID: VendorDetail.docID);
+                                  vendorID: VendorDetail.docID,
+                                  vendorStatus: VendorDetail.status,
+                                  vendorName: VendorDetail.name,
+                                  vendorPlace: VendorDetail.place);
                             }),
                       ),
                       BottomCart()

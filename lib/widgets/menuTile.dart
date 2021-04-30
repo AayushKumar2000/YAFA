@@ -6,8 +6,16 @@ import 'package:provider/provider.dart';
 class MenuTile extends StatelessWidget {
   late MenuModel menu;
   late String vendorID;
+  late String vendorPlace;
+  late String vendorName;
+  late bool vendorStatus;
 
-  MenuTile({required this.menu, required this.vendorID});
+  MenuTile(
+      {required this.menu,
+      required this.vendorID,
+      required this.vendorStatus,
+      required this.vendorPlace,
+      required this.vendorName});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -22,17 +30,19 @@ class MenuTile extends StatelessWidget {
                 children: <Widget>[
                   Text(menu.name,
                       style: TextStyle(
-                          letterSpacing: 0.5,
-                          fontSize: 18.0,
+                          letterSpacing: 0.25,
+                          fontSize: 17.0,
                           fontWeight: FontWeight.w600)),
                   SizedBox(height: 1.0),
-                  Text(
-                    '${menu.type == 'veg' ? 'In Veg Pizza' : 'In Non Veg Pizza'}',
-                    style: TextStyle(
-                      fontSize: 14.5,
-                      color: Colors.black54,
-                    ),
-                  ),
+                  menu.type != ""
+                      ? Text(
+                          '${menu.type}',
+                          style: TextStyle(
+                            fontSize: 14.5,
+                            color: Colors.black54,
+                          ),
+                        )
+                      : Container(),
                   SizedBox(
                     height: 10.0,
                   ),
@@ -46,7 +56,7 @@ class MenuTile extends StatelessWidget {
                     menu.description,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 3,
-                    style: TextStyle(fontSize: 15.5, color: Colors.grey[700]),
+                    style: TextStyle(fontSize: 14.0, color: Colors.grey[700]),
                   ),
                   SizedBox(
                     height: 12.0,
@@ -56,17 +66,20 @@ class MenuTile extends StatelessWidget {
                     height: 35.0,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: Colors.red,
+                      color: vendorStatus ? Colors.red : Colors.grey[400],
                       borderRadius: BorderRadius.circular(5.0),
                     ),
                     child: TextButton(
                       onPressed: () {
-                        Provider.of<Cart>(context, listen: false).addItem({
-                          "itemID": menu.docID,
-                          "itemName": menu.name,
-                          "vendorID": vendorID,
-                          "itemPrice": menu.price
-                        });
+                        if (vendorStatus)
+                          Provider.of<Cart>(context, listen: false).addItem({
+                            "itemID": menu.docID,
+                            "itemName": menu.name,
+                            "vendorID": vendorID,
+                            "vendorName": vendorName,
+                            "vendorPlace": vendorPlace,
+                            "itemPrice": menu.price
+                          });
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,

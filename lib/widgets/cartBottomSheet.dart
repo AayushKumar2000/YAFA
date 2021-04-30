@@ -1,6 +1,9 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:yafa/cart.dart';
+import 'package:yafa/providers/checkConnectivity.dart';
+import 'package:yafa/providers/upi.dart';
 
 class CartBottomSheet extends StatelessWidget {
   @override
@@ -179,7 +182,33 @@ void cartBottomSheet(context) {
                               color: Colors.white),
                         ),
                         TextButton(
-                            onPressed: () {},
+                            onPressed: () async {
+                              ConnectivityResult result =
+                                  Provider.of<CheckConnectivity>(context,
+                                          listen: false)
+                                      .connectivity;
+                              print("connectivity place order: $result");
+                              if (result != ConnectivityResult.none) {
+                                Provider.of<Cart>(context, listen: false)
+                                    .addTimeToOrder();
+                                Vendor_UPI v = Provider.of<Vendor_UPI>(context,
+                                    listen: false);
+                                Navigator.pushNamed(context, '/payment',
+                                    arguments: {
+                                      "VendorName": v.name,
+                                      "VendorUpiID": v.id
+                                    });
+                              } else {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  behavior: SnackBarBehavior.floating,
+                                  elevation: 30.0,
+                                  content: Text(
+                                      'No Internet Connection. Cannot Make Payment.'),
+                                  duration: new Duration(seconds: 2),
+                                ));
+                              }
+                            },
                             child: Row(
                               children: <Widget>[
                                 Text(

@@ -1,8 +1,19 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:provider/provider.dart';
+import 'package:yafa/providers/user.dart';
+import 'package:yafa/screens/account.dart';
 import 'package:yafa/screens/bookmark.dart';
 import 'package:yafa/screens/defaultHomeScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:yafa/screens/login.dart';
+import 'package:yafa/services/database_order.dart';
+
+import 'package:yafa/screens/pushNotification.dart';
+import 'package:yafa/widgets/test.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -10,6 +21,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+
   @override
   int _selectedIndex = 0;
 
@@ -28,15 +41,43 @@ class _HomeState extends State<Home> {
         return BookMarkScreen();
         break;
       case 2:
-        return accountScreen();
+        return Account();
         break;
       default:
         return Container();
     }
   }
 
+  void initState() {
+    super.initState();
+
+    // for handling notification tap
+
+    FirebaseMessaging.instance.getInitialMessage().then((message) {
+      if (message != null) Navigator.pushNamed(context, '/showOrder');
+    });
+
+    // If the message also contains a data property with a "type" of "chat",
+    // navigate to a chat screen
+
+    // Also handle any interaction when the app is in the background via a
+    // Stream listener
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print("remote message ${message.data}");
+      Navigator.pushNamed(context, '/showOrder');
+// Navigator.push(
+      //     context, new MaterialPageRoute(builder: (context) => new Test()));
+    });
+  }
+
+  @override
   @override
   Widget build(BuildContext context) {
+    final pushNotificationService = PushNotification(_firebaseMessaging);
+    pushNotificationService.initialise(context);
+    Provider.of<CurrentUser>(context, listen: false).getUser();
+
     return Scaffold(
         body: SafeArea(
           child: SelectedHomeScreen(),
@@ -64,8 +105,4 @@ class _HomeState extends State<Home> {
                   backgroundColor: Colors.white)
             ]));
   }
-}
-
-Widget accountScreen() {
-  return Container(child: Text('account'));
 }

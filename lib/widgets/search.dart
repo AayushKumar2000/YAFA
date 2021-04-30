@@ -1,8 +1,18 @@
+import 'dart:io';
+
+import 'package:connectivity/connectivity.dart';
+import 'package:provider/provider.dart';
+import 'package:yafa/models/model_Vendor.dart';
+import 'package:yafa/providers/checkConnectivity.dart';
+import 'package:yafa/services/database_Vendor.dart';
+import 'package:yafa/services/recent_search.dart';
+import 'package:yafa/widgets/connectivityError.dart';
 import 'package:yafa/widgets/loading.dart';
 import 'package:yafa/widgets/noResult.dart';
 import 'package:flutter/material.dart';
 import 'package:algolia_ns/algolia_ns.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:yafa/widgets/recentSearchList.dart';
 
 class Search extends SearchDelegate {
   final String searchFieldLabel = "Restaurant name, cuisine, or a dish";
@@ -11,7 +21,9 @@ class Search extends SearchDelegate {
 
   List<AlgoliaObjectSnapshot> _results = [];
   late Algolia algolia;
+  int counter = 0;
   late AlgoliaQuery queryAgolia;
+  DatabaseRecentSearch dbSearch = DatabaseRecentSearch.instance;
 
   Search() {
     algolia = Algolia.init(
@@ -24,15 +36,16 @@ class Search extends SearchDelegate {
 
   @override
   List<Widget> buildActions(BuildContext context) {
-    return [
-      IconButton(
-        icon: Icon(Icons.clear),
-        onPressed: () {
-          query = '';
-        },
-      ),
-    ];
-    ;
+    return query.isEmpty
+        ? [Container()]
+        : [
+            IconButton(
+              icon: Icon(Icons.clear),
+              onPressed: () {
+                query = '';
+              },
+            ),
+          ];
   }
 
   @override
@@ -46,66 +59,110 @@ class Search extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    return Container();
+    return Consumer<CheckConnectivity>(
+        builder: (context, checkConnectivity, child) {
+      if (checkConnectivity.connectivity == ConnectivityResult.none)
+        return ConnectivityError();
+      if (query.isEmpty)
+        return Text('');
+      else
+        return searchList();
+    });
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    if (query.isEmpty)
-      return Text('');
-    else
-      return FutureBuilder(
-        future: queryAgolia.search(query).getObjects(),
-        builder: (BuildContext context,
-            AsyncSnapshot<AlgoliaQuerySnapshot> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting)
+    print("build");
+    dbSearch.getData();
+    counter++;
+    return Consumer<CheckConnectivity>(
+        builder: (context, checkConnectivity, child) {
+      if (checkConnectivity.connectivity == ConnectivityResult.none)
+        return ConnectivityError();
+      else {
+        if (query.isEmpty) {
+          dbSearch.getData();
+          if (counter < 2) {
             return spinkitLoading;
+          } else
+            return FutureBuilder<List<RecentSearch>>(
+                future: dbSearch.getSearches(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting)
+                    return Container();
+                  ;
+                  if (snapshot.hasError)
+                    return Text('erorr: ${snapshot.error}');
 
-          if (snapshot.hasError) return Text('erorr');
-          _results = snapshot.data!.hits!;
-          print(snapshot.data!.hits!.length);
-          if (_results.length == 0)
-            return Container(
-              //padding: EdgeInsets.symmetric(horizontal: 2.0),
-              child: Center(
-                  child: NoResultFound(
-                primaryText: 'Opps!',
-                secondaryText: "No Result found for your query ",
-                secondaryBoldText: "'$query'",
-                secondaryText2: '\nTry rephrasing the query',
-              )),
-            );
-          else
-            return ListView.builder(
-              itemCount: _results.length,
-              itemBuilder: (context, index) {
-                String type = _results[index].data!['restaurantID'] != null
-                    ? "Dish"
-                    : "Outlet";
+                  return RecentSearchList(snapshot: snapshot.data!);
+                });
+        } else {
+          return FutureBuilder(
+            future: queryAgolia.search(query).getObjects(),
+            builder: (BuildContext context,
+                AsyncSnapshot<AlgoliaQuerySnapshot> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting)
+                return spinkitLoading;
+
+              if (snapshot.hasError) return Text('erorr');
+              _results = snapshot.data!.hits!;
+              if (_results.length == 0)
                 return Container(
-                  margin:
-                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                  padding: EdgeInsets.symmetric(vertical: 5.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        '${_results[index].data!['name']}',
-                        style: TextStyle(
-                            fontSize: 18.0, fontWeight: FontWeight.w500),
-                      ),
-                      SizedBox(
-                        height: 3.0,
-                      ),
-                      Text('${_results[index].data!['place'] ?? type}',
-                          style: TextStyle(
-                              fontSize: 15.0, color: Colors.grey[500])),
-                    ],
-                  ),
+                  //padding: EdgeInsets.symmetric(horizontal: 2.0),
+                  child: Center(
+                      child: NoResultFound(
+                    primaryText: 'Opps!',
+                    secondaryText: "No Result found for your query ",
+                    secondaryBoldText: "'$query'",
+                    secondaryText2: '\nTry rephrasing the query',
+                  )),
                 );
-              },
-            );
-        },
-      );
+              else
+                return searchList();
+            },
+          );
+        }
+      }
+    });
+  }
+
+  Widget searchList() {
+    return ListView.builder(
+      itemCount: _results.length,
+      itemBuilder: (context, index) {
+        print(_results[index].data);
+        String type =
+            _results[index].data!.containsKey('place') ? "Outlet" : "Dish";
+        String title = _results[index].data!['name'];
+        String sub_title = _results[index].data!['place'] ?? type;
+        String vendorID = _results[index].objectID!;
+        return ListTile(
+          title: Text(
+            '$title',
+            style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+          ),
+          subtitle: Text(sub_title,
+              style: TextStyle(fontSize: 15.0, color: Colors.grey[500])),
+          onTap: () {
+            RecentSearch search = RecentSearch(
+                search_title: title,
+                search_subTitle: sub_title,
+                search_vendorID: type == "Outlet" ? vendorID : null);
+            dbSearch.insertSearch(search);
+            getResultPage(context, type, title, vendorID);
+          },
+        );
+      },
+    );
+  }
+
+  void getResultPage(context, type, title, vendorID) async {
+    VendorDatabase v = VendorDatabase();
+    if (type == "Outlet") {
+      VendorModel vendor = await v.getVendor(vendorID);
+      Navigator.pushNamed(context, '/menu', arguments: vendor);
+    } else
+      Navigator.pushNamed(context, '/recentSearchResult',
+          arguments: {"query": title});
   }
 }

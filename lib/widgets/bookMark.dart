@@ -68,10 +68,25 @@ class _BookmarkState extends State<Bookmark>
 
       onTap: () {
         print(bookmarked);
-        if (!bookmarked)
+        if (!bookmarked) {
           UserDatabase().setBookMark(widget.Vendor);
-        else
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            content: Text(
+              'bookmark added.',
+            ),
+            duration: new Duration(seconds: 1),
+          ));
+        } else {
           UserDatabase().removeBookMark(widget.Vendor);
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            content: Text('bookmark removed.'),
+            duration: new Duration(seconds: 1),
+          ));
+        }
         setState(() {
           bookmarked
               ? widget.bookmarkList!.remove(widget.Vendor.docID)

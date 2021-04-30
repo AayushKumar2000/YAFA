@@ -1,14 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:yafa/models/model_Vendor.dart';
 
 class UserDatabase {
   late CollectionReference user;
+  late User? currentUser;
   UserDatabase() {
     user = FirebaseFirestore.instance.collection('Users');
+    FirebaseAuth auth = FirebaseAuth.instance;
+    currentUser = auth.currentUser;
+  }
+  void addUser(name, email) {
+    if (currentUser != null)
+      user
+          .doc(currentUser!.uid)
+          .set({"name": name, "email": email, "bookmarks": []})
+          .then((value) => print("User Added"))
+          .catchError((error) => print("Failed to add user: $error"));
+    ;
   }
 
   void setBookMark(VendorModel vendor) {
-    user.doc('L90Bf5l3l3kM3XTrFSOI').update({
+    user.doc(currentUser!.uid).update({
       'bookmarks': FieldValue.arrayUnion([_vendorMap(vendor)])
     }).then((v) => print("update"));
   }
@@ -23,20 +36,30 @@ class UserDatabase {
   }
 
   void removeBookMark(VendorModel vendor) {
-    user.doc('L90Bf5l3l3kM3XTrFSOI').update({
+    print("vendor: $vendor");
+    user.doc(currentUser!.uid).update({
       'bookmarks': FieldValue.arrayRemove([_vendorMap(vendor)])
     }).then((v) => print("update"));
   }
 
   void removeBookMark2(Map bookmark) {
-    user.doc('L90Bf5l3l3kM3XTrFSOI').update({
+    user.doc(currentUser!.uid).update({
       'bookmarks': FieldValue.arrayRemove([bookmark])
     }).then((v) => print("update"));
   }
 
   Future<List<dynamic>> getBookmarks() async {
-    DocumentSnapshot userData = await user.doc('L90Bf5l3l3kM3XTrFSOI').get();
+    DocumentSnapshot userData = await user.doc(currentUser!.uid).get();
 
     return userData.data()!['bookmarks'];
+  }
+
+  Future<Map<String, String>> getUser() async {
+    DocumentSnapshot userData = await user.doc(currentUser!.uid).get();
+    return {
+      "userID": currentUser!.uid,
+      "name": userData.data()!['name'],
+      "email": userData.data()!['email']
+    };
   }
 }
