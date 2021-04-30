@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:yafa/cart.dart';
 import 'package:yafa/providers/checkConnectivity.dart';
@@ -11,7 +13,7 @@ import 'package:yafa/screens/login.dart';
 import 'package:yafa/screens/menu.dart';
 import 'package:yafa/screens/otp.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-
+import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:page_transition/page_transition.dart';
@@ -63,10 +65,74 @@ class App extends StatefulWidget {
   _AppState createState() => _AppState();
 }
 
-class _AppState extends State<App> {
+class _AppState extends State<App> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.removeObserver(this);
+    super.dispose();
+  }
+
+  Future<String> get _localPath async {
+    final directory = await getApplicationDocumentsDirectory();
+
+    return directory.path;
+  }
+
+  Future<File> get _localFile async {
+    final path = await _localPath;
+    return File('$path/counter.txt');
+  }
+
+  readCounter() async {
+    try {
+      final file = await _localFile;
+
+      // Read the file.
+      String contents = await file.readAsString();
+      print("file content $contents");
+    } catch (e) {
+      // If encountering an error, return 0.
+      print("file error $e");
+      return 0;
+    }
+  }
+
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        break;
+      case AppLifecycleState.inactive:
+        print("app in inactive");
+        break;
+      case AppLifecycleState.paused:
+        {
+          print("app in paused");
+          final file = await _localFile;
+          print("file: $file");
+          file.writeAsString('hi there , how you are doing');
+        }
+        break;
+      case AppLifecycleState.detached:
+        {
+          print("app in detached");
+          // final file = await _localFile;
+
+          // file.writeAsString('hi there , how you are doing');
+        }
+        break;
+    }
+  }
+
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   @override
   Widget build(BuildContext context) {
+    readCounter();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<Cart>(create: (context) => Cart()),
@@ -80,7 +146,7 @@ class _AppState extends State<App> {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        initialRoute: '/vendorOrder',
+        // initialRoute: '/vendorOrder',
 
         routes: {
           '/': (context) => handleAuth(),

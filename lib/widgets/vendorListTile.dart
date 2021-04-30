@@ -57,6 +57,7 @@ class _VendorListTileState extends State<VendorListTile>
       onTapDown: _tapDown,
       onTapUp: _tapUp,
       onTap: () {
+        //   if (widget.vendor.status)
         Navigator.pushNamed(context, '/menu', arguments: widget.vendor);
       },
       child: Transform.scale(

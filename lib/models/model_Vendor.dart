@@ -26,8 +26,11 @@ class VendorModel {
     var foodTypefromJson = parsedJSON['foodType'];
     bool containUPI = parsedJSON['upi'] != null ? true : false;
     List<String> foodType = new List<String>.from(foodTypefromJson);
-    double rating = (parsedJSON['rating']['total_rating'] /
-        parsedJSON['rating']['no_of_ratings']);
+    double rating = parsedJSON['rating'] == null
+        ? 0
+        : (parsedJSON['rating']['total_rating'] /
+                parsedJSON['rating']['no_of_ratings']) ??
+            0.0;
     String st = rating.toStringAsFixed(1);
     rating = double.parse(st);
     if (rating.isNaN) rating = 0;
@@ -40,8 +43,13 @@ class VendorModel {
         name: parsedJSON['name'],
         place: parsedJSON['place'],
         status: parsedJSON['status'],
-        total_rating: (parsedJSON['rating']['total_rating']).toDouble(),
-        no_of_ratings: parsedJSON['rating']['no_of_ratings'],
+        total_rating: (parsedJSON['rating'] == null
+                ? 0
+                : parsedJSON['rating']['total_rating'])
+            .toDouble(),
+        no_of_ratings: parsedJSON['rating'] == null
+            ? 0
+            : parsedJSON['rating']['no_of_ratings'],
         rating: rating,
         foodType: foodType);
   }

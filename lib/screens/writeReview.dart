@@ -34,8 +34,11 @@ class _WriteReviewState extends State<WriteReview> {
           await transaction.get(reviewDocumetReference);
 
       Map data = snapshot.data()!;
-      int no_of_ratings = data['rating']['no_of_ratings'];
-      double total_rating = data['rating']['total_rating'].toDouble();
+      int no_of_ratings =
+          data['rating'] == null ? 0 : data['rating']['no_of_ratings'];
+      double total_rating = data['rating'] == null
+          ? 0
+          : data['rating']['total_rating'].toDouble();
 
       if (reviewSnapshot.exists) {
         Map reviewData = reviewSnapshot.data()!;

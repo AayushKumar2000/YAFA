@@ -178,6 +178,7 @@ class Menu extends StatelessWidget {
                               return MenuTile(
                                   menu: snapshot.data![index],
                                   vendorID: VendorDetail.docID,
+                                  vendorStatus: VendorDetail.status,
                                   vendorName: VendorDetail.name,
                                   vendorPlace: VendorDetail.place);
                             }),

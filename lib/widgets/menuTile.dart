@@ -8,10 +8,12 @@ class MenuTile extends StatelessWidget {
   late String vendorID;
   late String vendorPlace;
   late String vendorName;
+  late bool vendorStatus;
 
   MenuTile(
       {required this.menu,
       required this.vendorID,
+      required this.vendorStatus,
       required this.vendorPlace,
       required this.vendorName});
   @override
@@ -64,19 +66,20 @@ class MenuTile extends StatelessWidget {
                     height: 35.0,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: Colors.red,
+                      color: vendorStatus ? Colors.red : Colors.grey[400],
                       borderRadius: BorderRadius.circular(5.0),
                     ),
                     child: TextButton(
                       onPressed: () {
-                        Provider.of<Cart>(context, listen: false).addItem({
-                          "itemID": menu.docID,
-                          "itemName": menu.name,
-                          "vendorID": vendorID,
-                          "vendorName": vendorName,
-                          "vendorPlace": vendorPlace,
-                          "itemPrice": menu.price
-                        });
+                        if (vendorStatus)
+                          Provider.of<Cart>(context, listen: false).addItem({
+                            "itemID": menu.docID,
+                            "itemName": menu.name,
+                            "vendorID": vendorID,
+                            "vendorName": vendorName,
+                            "vendorPlace": vendorPlace,
+                            "itemPrice": menu.price
+                          });
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,

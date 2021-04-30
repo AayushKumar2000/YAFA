@@ -35,7 +35,7 @@ class VendorFireStoreOrderModel {
         deliveredTime: parsedJSON['deliveredTime'] ?? "",
         timeStamp: parsedJSON['timeStamp'],
         totalItem: parsedJSON['totalItems'],
-        totalPrice: parsedJSON['totalPrice'],
+        totalPrice: parsedJSON['totalPrice'].toDouble(),
         docID: id,
         items: parsedJSON['items']);
   }
@@ -43,7 +43,7 @@ class VendorFireStoreOrderModel {
 
 class VendorFireStoreOrder {
   Stream<List<VendorFireStoreOrderModel>> getOrders(
-      {vendorID = "EN5JRmSmNRHySxIfM665"}) {
+      {vendorID = "ZYuYxT4zUVNEDEY48hGxCPkL63b2"}) {
     return FirebaseFirestore.instance
         .collection("Vendors/$vendorID/Orders")
         .snapshots()
@@ -55,7 +55,7 @@ class VendorFireStoreOrder {
   }
 
   Future<String> changeOrderStatus(docID) async {
-    String vendorID = "EN5JRmSmNRHySxIfM665";
+    String vendorID = "ZYuYxT4zUVNEDEY48hGxCPkL63b2";
     await FirebaseFirestore.instance
         .collection("Vendors/$vendorID/Orders")
         .doc(docID)

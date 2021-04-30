@@ -9,11 +9,14 @@ class Account extends StatefulWidget {
 }
 
 class _AccountState extends State<Account> {
+  bool isToogle = false;
+
+  onSwitch() {}
   @override
   Widget build(BuildContext context) {
     CurrentUser currentUser = Provider.of<CurrentUser>(context, listen: false);
 
-    print(currentUser.user);
+    print("toogle $isToogle");
 
     return Container(
         padding: EdgeInsets.only(top: 40.0, left: 14.0, right: 14.0),
@@ -169,7 +172,30 @@ class _AccountState extends State<Account> {
                       ))
                 ],
               ),
-            )
+            ),
+            // extra
+//             SizedBox(height: 20),
+//             ListTile(
+//               title: Text('ON/OFF'),
+//               trailing: Switch(
+//                 onChanged: (bool value) {
+//                   print("value $value");
+//                   if (value) {
+//                     // update vendor status=false
+//                     setState(() {
+//                       isToogle = true;
+//                     });
+//                   } else {
+// // update vendor status=true
+//                     setState(() {
+//                       isToogle = false;
+//                     });
+//                   }
+//                 },
+//                 value: isToogle,
+//                 activeColor: Colors.red,
+//               ),
+//             )
           ],
         ));
     ;
