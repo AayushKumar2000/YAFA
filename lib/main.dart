@@ -8,6 +8,7 @@ import 'package:yafa/providers/upi.dart';
 
 import 'package:yafa/providers/user.dart';
 import 'package:yafa/providers/vendor_order_details.dart';
+import 'package:yafa/screens/editMenu.dart';
 import 'package:yafa/screens/home.dart';
 import 'package:yafa/screens/login.dart';
 import 'package:yafa/screens/menu.dart';
@@ -146,7 +147,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        // initialRoute: '/vendorOrder',
+        initialRoute: '/editMenu',
 
         routes: {
           '/': (context) => handleAuth(),
@@ -161,6 +162,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
           '/review': (context) => ReviewList(),
           '/writeReview': (context) => WriteReview(),
           '/test': (context) => Test(),
+          '/editMenu': (context) => EditMenu(),
           '/vendorOrder': (context) => VendorOrder()
         },
 
